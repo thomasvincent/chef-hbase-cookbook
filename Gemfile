@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 
-gem 'chef', '~> 17.10'
-gem 'cookstyle', '~> 7.32'
-gem 'kitchen-docker', '~> 2.13'
-gem 'kitchen-inspec', '~> 2.5'
-gem 'test-kitchen', '~> 3.3'
+gem 'chef', '~> 16.16'
+gem 'cookstyle', '~> 7.25'
+gem 'kitchen-docker', '~> 2.12'
+gem 'kitchen-inspec', '~> 2.4'
+gem 'test-kitchen', '~> 3.2'
 
 group :test do
-  gem 'chefspec', '~> 9.3'
-  gem 'rspec', '~> 3.11'
+  gem 'chefspec', '~> 9.2'
+  gem 'rspec', '~> 3.10'
 end
