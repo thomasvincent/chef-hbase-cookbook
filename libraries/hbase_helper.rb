@@ -55,7 +55,14 @@ module HBase
 
     # Returns a list of nodes in the cluster with a specific role
     def nodes_with_role(role, environment = node.chef_environment)
-      results = search(:node, "chef_environment:#{environment} AND hbase_topology_role:#{role}")
+      results = []
+      
+      begin
+        results = search(:node, "chef_environment:#{environment} AND hbase_topology_role:#{role}")
+      rescue Net::HTTPClientException, Chef::Exceptions::InvalidDataBagPath
+        Chef::Log.warn("Could not search for nodes with role #{role}. This may happen in ChefSpec runs")
+      end
+      
       results.sort_by { |n| n['name'] }
     end
 
