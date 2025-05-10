@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Set environment variables here.
+
+# The java implementation to use.
+export JAVA_HOME=<%= node['hbase']['java_home'] %>
+
+# HBase Configuration directory
+export HBASE_CONF_DIR=<%= node['hbase']['conf_dir'] %>
+
+# Extra Java runtime options.
+# Below are what we set by default.  May only work with SUN JVM.
+export HBASE_OPTS="<%= node['hbase']['java_opts'] %>"
+
+# Where log files are stored.  $HBASE_HOME/logs by default.
+export HBASE_LOG_DIR=<%= node['hbase']['log_dir'] %>
+
+# Uncomment below if you want to enable JMX
+# export HBASE_JMX_BASE="-Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
+# export HBASE_MASTER_OPTS="$HBASE_MASTER_OPTS $HBASE_JMX_BASE -Dcom.sun.management.jmxremote.port=10101"
+# export HBASE_REGIONSERVER_OPTS="$HBASE_REGIONSERVER_OPTS $HBASE_JMX_BASE -Dcom.sun.management.jmxremote.port=10102"
+
+# File naming hosts on which HRegionServers will run.
+# export HBASE_REGIONSERVERS=${HBASE_HOME}/conf/regionservers
+
+# Extra SSH options.  Empty by default.
+# export HBASE_SSH_OPTS="-o ConnectTimeout=1 -o SendEnv=HBASE_CONF_DIR"
+
+# Where HBase pid files are stored.
+export HBASE_PID_DIR=/var/run/hbase

@@ -1,0 +1,10 @@
+FROM chef/chefworkstation:latest
+
+WORKDIR /cookbook
+COPY . /cookbook
+
+RUN chef gem install kitchen-docker
+RUN chef gem install kitchen-inspec
+RUN apt-get update && apt-get install -y docker.io
+
+CMD ["kitchen", "verify"]

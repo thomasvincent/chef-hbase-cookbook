@@ -1,0 +1,26 @@
+Client {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  storeKey=true
+  useTicketCache=false
+  keyTab="<%= @keytab %>"
+  principal="<%= @principal.gsub('_HOST', node['fqdn']) %>";
+};
+
+Server {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  storeKey=true
+  useTicketCache=false
+  keyTab="<%= @keytab %>"
+  principal="<%= @principal.gsub('_HOST', node['fqdn']) %>";
+};
+
+HBase {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  storeKey=true
+  useTicketCache=false
+  keyTab="<%= @keytab %>"
+  principal="<%= @principal.gsub('_HOST', node['fqdn']) %>";
+};
