@@ -29,6 +29,7 @@ This cookbook installs and configures Apache HBase - the Hadoop database, a dist
 - Comprehensive configuration options via attributes
 - Resource-based configuration for cleaner, reusable code
 - Integration with Hadoop HDFS (for rootdir)
+- Docker-based testing infrastructure
 
 ## Usage
 
@@ -142,17 +143,41 @@ end
 
 ## Testing
 
-This cookbook uses Test Kitchen for integration testing with Docker:
+This cookbook uses Test Kitchen with Docker for integration testing:
 
 ```bash
-# Run full test suite
-bundle install
-kitchen test
+# Run all tests
+bundle exec rake test
 
-# Test specific platforms/suites
-kitchen test ubuntu-22.04-default
-kitchen test centos-stream-8-kerberos
+# Run style checks only
+bundle exec rake style
+
+# Run unit tests only
+bundle exec rake spec
+
+# Run integration tests
+bundle exec rake integration:docker
 ```
+
+### Docker Container Testing
+
+For testing in an isolated environment, you can use the provided Docker container:
+
+```bash
+# Build the container
+docker build -t hbase-test -f Dockerfile.kitchen .
+
+# Run tests inside the container
+docker run --rm hbase-test
+```
+
+## CI/CD
+
+This cookbook uses GitHub Actions for CI/CD, with workflows defined in `.github/workflows/ci.yml`:
+
+1. **Linting**: Runs Cookstyle to check code style
+2. **Unit Testing**: Runs ChefSpec tests
+3. **Docker Testing**: Tests Docker container build
 
 ## Attributes
 
