@@ -164,29 +164,41 @@ end
 This cookbook uses Test Kitchen with Docker for integration testing:
 
 ```bash
-# Run all tests
-bundle exec rake test
+# Run all tests using Docker
+KITCHEN_YAML=kitchen.docker.yml bundle exec kitchen test
 
-# Run style checks only
-bundle exec rake style
+# Run only specific platform tests
+KITCHEN_YAML=kitchen.docker.yml bundle exec kitchen test ubuntu-22.04
 
-# Run unit tests only
-bundle exec rake spec
-
-# Run integration tests
-bundle exec rake integration:docker
+# Run only a specific suite on a specific platform
+KITCHEN_YAML=kitchen.docker.yml bundle exec kitchen test ubuntu-22.04-default
 ```
 
-### Docker Container Testing
+### Using Rake Tasks for Testing
 
-For testing in an isolated environment, you can use the provided Docker container:
+The cookbook includes Rake tasks to simplify testing:
 
 ```bash
-# Build the container
-docker build -t hbase-test -f Dockerfile.kitchen .
+# Run all tests (style, unit, integration)
+bundle exec rake test
 
-# Run tests inside the container
-docker run --rm hbase-test
+# Run only style checks
+bundle exec rake style
+
+# Run only unit tests
+bundle exec rake spec
+
+# Run integration tests with Docker
+bundle exec rake integration:docker
+
+# Test a specific platform
+bundle exec rake integration:docker_platform[ubuntu-22.04]
+
+# Test a specific suite
+bundle exec rake integration:suite[distributed]
+
+# Test a specific instance
+bundle exec rake integration:instance[ubuntu-22.04-distributed]
 ```
 
 ## CI/CD
@@ -194,8 +206,11 @@ docker run --rm hbase-test
 This cookbook uses GitHub Actions for CI/CD, with workflows defined in `.github/workflows/ci.yml`:
 
 1. **Linting**: Runs Cookstyle to check code style
-2. **Unit Testing**: Runs ChefSpec tests
-3. **Docker Testing**: Tests Docker container build with multiple platforms
+2. **Unit Testing**: Runs ChefSpec tests 
+3. **Integration Testing**: Runs Test Kitchen tests on multiple platforms using Docker:
+   - Ubuntu 20.04 and 22.04
+   - AlmaLinux 8
+   - Amazon Linux 2
 
 ## Attributes
 
