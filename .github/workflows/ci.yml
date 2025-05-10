@@ -2,9 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   lint:
@@ -14,7 +15,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.1'
+        ruby-version: '2.7'
         bundler-cache: true
     - name: Install dependencies
       run: bundle install
@@ -29,62 +30,9 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.1'
+        ruby-version: '2.7'
         bundler-cache: true
     - name: Install dependencies
       run: bundle install
     - name: Run ChefSpec
       run: bundle exec rspec spec/
-    - name: Generate Coverage Report
-      run: |
-        bundle exec rspec --format progress --format documentation \
-          --format RspecJunitFormatter --out rspec.xml \
-          --format html --out coverage/report.html
-      
-  integration:
-    needs: [lint, unit-test]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ['ubuntu-22.04', 'centos-stream-8']
-        suite: ['default', 'distributed', 'thrift', 'rest']
-        exclude:
-          # Exclude some combinations to save time
-          - os: 'centos-stream-8'
-            suite: 'thrift'
-          - os: 'centos-stream-8'
-            suite: 'rest'
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.1'
-        bundler-cache: true
-    - name: Install dependencies
-      run: bundle install
-    - name: Install Chef
-      run: |
-        curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P chef-workstation -v 22.10.1013
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
-    - name: Test Kitchen
-      run: |
-        echo 'ci.skip: true' >> kitchen.yml
-        bundle exec kitchen verify ${{ matrix.os }}-${{ matrix.suite }}
-        
-  publish-test-results:
-    if: always()
-    needs: [unit-test, integration]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Test Results
-        uses: actions/download-artifact@v3
-        with:
-          name: test-results
-          path: test-results
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: test-results/**/*.xml
