@@ -59,6 +59,13 @@ default['hbase']['config']['hbase.client.pause'] = 100
 default['hbase']['config']['hbase.client.max.perserver.tasks'] = 2
 default['hbase']['config']['hbase.defaults.for.version.skip'] = true
 
+# Performance tuning
+default['hbase']['config']['hbase.ipc.server.read.threadpool.size'] = 10
+default['hbase']['config']['hbase.server.thread.wakefrequency'] = 10000
+default['hbase']['config']['hbase.server.versionfile.writeattempts'] = 3
+default['hbase']['config']['hbase.rpc.timeout'] = 60000
+default['hbase']['config']['hbase.regions.slop'] = 0.2
+
 # Security configuration
 default['hbase']['security']['authentication'] = 'simple' # 'simple' or 'kerberos'
 default['hbase']['security']['authorization'] = false
@@ -78,6 +85,15 @@ default['hbase']['services']['thrift']['enabled'] = false
 default['hbase']['services']['thrift']['config'] = {}
 default['hbase']['services']['rest']['enabled'] = false
 default['hbase']['services']['rest']['config'] = {}
+
+# Metrics and monitoring
+default['hbase']['metrics']['enabled'] = false
+default['hbase']['metrics']['provider'] = 'prometheus' # 'prometheus' or 'graphite'
+default['hbase']['metrics']['prometheus']['port'] = 9090
+default['hbase']['metrics']['graphite']['host'] = 'localhost'
+default['hbase']['metrics']['graphite']['port'] = 2003
+default['hbase']['metrics']['graphite']['prefix'] = 'hbase'
+default['hbase']['metrics']['period'] = 10
 
 # Coprocessors
 default['hbase']['coprocessors'] = []

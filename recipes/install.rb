@@ -7,21 +7,37 @@
 # Licensed under the Apache License, Version 2.0
 
 # Create required directories
-[
-  node['hbase']['install_dir'],
-  node['hbase']['conf_dir'],
-  node['hbase']['log_dir'],
-  node['hbase']['pid_dir'],
-  ::File.dirname(node['hbase']['config']['hbase.rootdir'].sub('file://', '')),
-  ::File.dirname(node['hbase']['config']['hbase.zookeeper.property.dataDir'])
-].each do |dir|
-  directory dir do
+%w(
+  install_dir
+  conf_dir
+  log_dir
+  pid_dir
+).each do |dir|
+  directory node['hbase'][dir] do
     owner node['hbase']['user']
     group node['hbase']['group']
     mode '0755'
     recursive true
     action :create
   end
+end
+
+# Create data directories
+directory ::File.dirname(node['hbase']['config']['hbase.rootdir'].sub('file://', '')) do
+  owner node['hbase']['user']
+  group node['hbase']['group']
+  mode '0755'
+  recursive true
+  action :create
+  not_if { node['hbase']['config']['hbase.rootdir'].start_with?('hdfs://') }
+end
+
+directory node['hbase']['config']['hbase.zookeeper.property.dataDir'] do
+  owner node['hbase']['user']
+  group node['hbase']['group']
+  mode '0755'
+  recursive true
+  action :create
 end
 
 case node['hbase']['install']['method']
@@ -52,30 +68,4 @@ when 'package'
       action :install
     end
   end
-end
-
-# Create PID directory with proper permissions
-directory node['hbase']['pid_dir'] do
-  owner node['hbase']['user']
-  group node['hbase']['group']
-  mode '0755'
-  action :create
-end
-
-# Create data directories
-directory ::File.dirname(node['hbase']['config']['hbase.rootdir'].sub('file://', '')) do
-  owner node['hbase']['user']
-  group node['hbase']['group']
-  mode '0755'
-  recursive true
-  action :create
-  not_if { node['hbase']['config']['hbase.rootdir'].start_with?('hdfs://') }
-end
-
-directory node['hbase']['config']['hbase.zookeeper.property.dataDir'] do
-  owner node['hbase']['user']
-  group node['hbase']['group']
-  mode '0755'
-  recursive true
-  action :create
 end

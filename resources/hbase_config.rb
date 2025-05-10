@@ -1,5 +1,7 @@
 unified_mode true
 
+provides :hbase_config
+
 property :path, String, name_property: true
 property :user, String, default: lazy { node['hbase']['user'] }
 property :group, String, default: lazy { node['hbase']['group'] }
@@ -10,29 +12,32 @@ property :template_source, String
 property :restart_services, Array, default: []
 property :use_helpers, [true, false], default: false
 
-action :create do
-  # Determine template source based on config_type if not explicitly provided
-  source = new_resource.template_source
-  unless source
-    case new_resource.config_type
-    when 'xml'
-      source = 'hbase-site.xml.erb'
-    when 'properties'
-      source = 'log4j2.properties.erb'
-    when 'env'
-      source = 'hbase-env.sh.erb'
-    when 'script'
-      source = 'generic-script.erb'
-    end
+action_class do
+  # Select appropriate template based on config_type
+  def determine_template_source
+    new_resource.template_source || case new_resource.config_type
+                                    when 'xml'
+                                      'hbase-site.xml.erb'
+                                    when 'properties'
+                                      'log4j2.properties.erb'
+                                    when 'env'
+                                      'hbase-env.sh.erb'
+                                    when 'script'
+                                      'generic-script.erb'
+                                    end
   end
 
-  # Process variables if use_helpers is true
-  final_variables = if new_resource.use_helpers && new_resource.config_type == 'xml'
-                      { config: validate_config(new_resource.variables) }
-                    else
-                      new_resource.variables
-                    end
+  # Process variables applying helpers if needed
+  def process_variables
+    if new_resource.use_helpers && new_resource.config_type == 'xml'
+      { config: validate_config(new_resource.variables) }
+    else
+      new_resource.variables
+    end
+  end
+end
 
+action :create do
   # Create parent directory if needed
   directory ::File.dirname(new_resource.path) do
     owner new_resource.user
@@ -45,12 +50,12 @@ action :create do
 
   # Create/update configuration file
   template new_resource.path do
-    source source
+    source determine_template_source
     cookbook 'hbase'
     owner new_resource.user
     group new_resource.group
     mode new_resource.mode
-    variables final_variables
+    variables process_variables
     action :create
 
     # Restart services if specified
