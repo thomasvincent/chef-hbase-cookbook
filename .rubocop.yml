@@ -1,0 +1,20 @@
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
+    - '.git/**/*'
+    - '.kitchen/**/*'
+    - 'bin/**/*'
+
+ChefStyle/CommentFormat:
+  Enabled: true
+ChefModernize/FoodcriticComments:
+  Enabled: true
+ChefStyle/FileMode:
+  Enabled: true
+Layout/TrailingEmptyLines:
+  Enabled: true
+Layout/TrailingWhitespace:
+  Enabled: true
+ChefCorrectness/SyntaxErrorsInMetadata:
+  Enabled: true
