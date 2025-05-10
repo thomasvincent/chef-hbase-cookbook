@@ -17,6 +17,10 @@ describe 'hbase::default' do
       expect { chef_run }.to_not raise_error
     end
 
+    it 'includes the hbase::java recipe' do
+      expect(chef_run).to include_recipe('hbase::java')
+    end
+
     it 'includes the hbase::user recipe' do
       expect(chef_run).to include_recipe('hbase::user')
     end
