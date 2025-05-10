@@ -1,10 +1,31 @@
-FROM chef/chefworkstation:latest
+FROM ruby:2.7
 
 WORKDIR /cookbook
-COPY . /cookbook
 
-RUN chef gem install kitchen-docker
-RUN chef gem install kitchen-inspec
-RUN apt-get update && apt-get install -y docker.io
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libffi-dev \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-CMD ["kitchen", "verify"]
+# Install Docker client for docker-in-docker testing
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
+    sh get-docker.sh && \
+    rm get-docker.sh
+
+# Install Chef Workstation components
+RUN gem install chef -v '~> 16.10' --no-document && \
+    gem install berkshelf -v '~> 7.2' --no-document && \
+    gem install test-kitchen -v '~> 3.2' --no-document && \
+    gem install kitchen-docker -v '~> 2.12' --no-document && \
+    gem install kitchen-inspec -v '~> 2.4' --no-document && \
+    gem install cookstyle -v '~> 7.25' --no-document
+
+COPY . /cookbook/
+
+RUN cd /cookbook && \
+    bundle install --without development
+
+# Default command runs tests
+CMD ["bundle", "exec", "rake", "test"]
