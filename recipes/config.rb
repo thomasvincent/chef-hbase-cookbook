@@ -12,7 +12,7 @@
 hbase_config "#{node['hbase']['conf_dir']}/hbase-site.xml" do
   user node['hbase']['user']
   group node['hbase']['group']
-  variables(config: node['hbase']['config'])
+  variables(node['hbase']['config'])
   config_type 'xml'
   use_helpers true
   action :create
@@ -25,7 +25,6 @@ env_vars = {
   'hbase_log_dir' => node['hbase']['log_dir'],
   'hbase_pid_dir' => node['hbase']['pid_dir'],
   'hbase_opts' => node['hbase']['java_opts'],
-  'hbase_heapsize' => node['hbase']['config']['hbase.heapsize'] || '1000',
 }
 
 # Add Kerberos settings if authentication is kerberos
@@ -44,6 +43,32 @@ if node['hbase']['security']['authentication'] == 'kerberos'
       realm: node['hbase']['security']['kerberos']['realm']
     )
     action :create
+  end
+end
+
+# Add metrics configuration if enabled
+if node['hbase']['metrics']['enabled']
+  case node['hbase']['metrics']['provider']
+  when 'prometheus'
+    env_vars['hbase_opts'] = "#{env_vars['hbase_opts']} -javaagent:#{node['hbase']['install_dir']}/lib/jmx_prometheus_javaagent.jar=#{node['hbase']['metrics']['prometheus']['port']}:#{node['hbase']['conf_dir']}/prometheus.yml"
+    
+    cookbook_file "#{node['hbase']['install_dir']}/lib/jmx_prometheus_javaagent.jar" do
+      source 'jmx_prometheus_javaagent.jar'
+      owner node['hbase']['user']
+      group node['hbase']['group']
+      mode '0644'
+      action :create
+    end
+    
+    template "#{node['hbase']['conf_dir']}/prometheus.yml" do
+      source 'prometheus.yml.erb'
+      owner node['hbase']['user']
+      group node['hbase']['group']
+      mode '0644'
+      action :create
+    end
+  when 'graphite'
+    env_vars['hbase_opts'] = "#{env_vars['hbase_opts']} -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
   end
 end
 
@@ -101,7 +126,7 @@ if node['hbase']['config']['hbase.rootdir'].start_with?('hdfs://')
     hbase_config "#{node['hbase']['conf_dir']}/core-site.xml" do
       user node['hbase']['user']
       group node['hbase']['group']
-      variables(config: node['hbase']['hadoop']['core_site'])
+      variables(node['hbase']['hadoop']['core_site'])
       config_type 'xml'
       use_helpers true
       action :create
@@ -113,7 +138,7 @@ if node['hbase']['config']['hbase.rootdir'].start_with?('hdfs://')
     hbase_config "#{node['hbase']['conf_dir']}/hdfs-site.xml" do
       user node['hbase']['user']
       group node['hbase']['group']
-      variables(config: node['hbase']['hadoop']['hdfs_site'])
+      variables(node['hbase']['hadoop']['hdfs_site'])
       config_type 'xml'
       use_helpers true
       action :create

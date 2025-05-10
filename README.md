@@ -7,13 +7,14 @@ This cookbook installs and configures Apache HBase - the Hadoop database, a dist
 ## Requirements
 
 ### Platforms
-- Ubuntu 20.04+
+- Ubuntu 20.04, 22.04
 - Debian 11+
-- CentOS/RHEL 8+
+- AlmaLinux/RHEL 8, 9
 - Amazon Linux 2
+- Fedora 36+
 
 ### Chef
-- Chef 16.0+
+- Chef 17.0+
 
 ### Cookbooks
 - `java` - HBase requires Java
@@ -25,9 +26,10 @@ This cookbook installs and configures Apache HBase - the Hadoop database, a dist
 - Supports HBase Master, RegionServer, and Backup Master roles
 - Supports optional REST and Thrift services
 - Full Kerberos security integration
-- Support for custom JVM configuration
+- Support for metrics collection (Prometheus, Graphite)
+- Advanced tuning parameters
 - Comprehensive configuration options via attributes
-- Resource-based configuration for cleaner, reusable code
+- Modern custom resources for service and configuration management
 - Integration with Hadoop HDFS (for rootdir)
 - Docker-based testing infrastructure
 
@@ -96,6 +98,22 @@ node['hbase']['config']['hbase.security.authentication'] = 'kerberos'
 node['hbase']['config']['hbase.security.authorization'] = true
 node['hbase']['config']['hbase.master.kerberos.principal'] = 'hbase/_HOST@EXAMPLE.COM'
 node['hbase']['config']['hbase.regionserver.kerberos.principal'] = 'hbase/_HOST@EXAMPLE.COM'
+```
+
+### Metrics Collection
+
+```ruby
+# Enable Prometheus metrics
+node['hbase']['metrics']['enabled'] = true
+node['hbase']['metrics']['provider'] = 'prometheus'
+node['hbase']['metrics']['prometheus']['port'] = 9090
+
+# Or Graphite metrics
+node['hbase']['metrics']['enabled'] = true
+node['hbase']['metrics']['provider'] = 'graphite'
+node['hbase']['metrics']['graphite']['host'] = 'metrics.example.com'
+node['hbase']['metrics']['graphite']['port'] = 2003
+node['hbase']['metrics']['graphite']['prefix'] = 'prod.hbase'
 ```
 
 ### Advanced JVM Configuration
@@ -177,7 +195,7 @@ This cookbook uses GitHub Actions for CI/CD, with workflows defined in `.github/
 
 1. **Linting**: Runs Cookstyle to check code style
 2. **Unit Testing**: Runs ChefSpec tests
-3. **Docker Testing**: Tests Docker container build
+3. **Docker Testing**: Tests Docker container build with multiple platforms
 
 ## Attributes
 

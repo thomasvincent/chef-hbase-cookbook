@@ -10,7 +10,7 @@ driver:
 provisioner:
   name: chef_zero
   product_name: chef
-  product_version: 16.10
+  product_version: 17.10
   chef_license: accept-silent
   enforce_idempotency: true
   multiple_converge: 2
@@ -26,9 +26,9 @@ platforms:
       image: dokken/ubuntu-20.04
       pid_one_command: /bin/systemd
 
-  - name: centos-8
+  - name: ubuntu-22.04
     driver_config:
-      image: dokken/centos-8
+      image: dokken/ubuntu-22.04
       pid_one_command: /bin/systemd
 
   - name: debian-11
@@ -36,9 +36,24 @@ platforms:
       image: dokken/debian-11
       pid_one_command: /bin/systemd
 
+  - name: almalinux-8
+    driver_config:
+      image: dokken/almalinux-8
+      pid_one_command: /bin/systemd
+
+  - name: almalinux-9
+    driver_config:
+      image: dokken/almalinux-9
+      pid_one_command: /bin/systemd
+
   - name: amazonlinux-2
     driver_config:
       image: dokken/amazonlinux-2
+      pid_one_command: /bin/systemd
+
+  - name: fedora-36
+    driver_config:
+      image: dokken/fedora-36
       pid_one_command: /bin/systemd
 
 suites:
