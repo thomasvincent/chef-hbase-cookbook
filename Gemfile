@@ -1,24 +1,27 @@
 source 'https://rubygems.org'
 
-gem 'chef', '~> 17.0'
-gem 'berkshelf', '~> 7.2'
+gem 'chef', '~> 17.10'
 gem 'cookstyle', '~> 7.32'
-gem 'kitchen-docker', '~> 2.12'
-gem 'kitchen-dokken', '~> 2.17'
-gem 'kitchen-inspec', '~> 2.5'
-gem 'test-kitchen', '~> 3.3'
+gem 'test-kitchen', '~> 3.5'
+gem 'kitchen-dokken', '~> 2.20'
+gem 'kitchen-inspec', '~> 2.7'
 
 group :development do
   gem 'rb-readline'
   gem 'guard'
   gem 'guard-kitchen'
   gem 'guard-rspec'
+  gem 'rake'
 end
 
 group :test do
   gem 'chefspec', '~> 9.3'
-  gem 'inspec', '~> 5.18'
-  gem 'rspec', '~> 3.11'
+  gem 'inspec', '~> 5.21'
+  gem 'rspec', '~> 3.12'
   gem 'rspec-its'
-  gem 'simplecov', '~> 0.21.2'
+  gem 'simplecov', '~> 0.22.0'
+end
+
+group :docs do
+  gem 'yard'
 end

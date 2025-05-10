@@ -12,6 +12,7 @@ Chef::Log.info('Starting HBase installation')
 extend HBase::Helper
 
 # Include dependent recipes
+include_recipe 'hbase::java'
 include_recipe 'hbase::user'
 include_recipe 'hbase::install'
 include_recipe 'hbase::config'
