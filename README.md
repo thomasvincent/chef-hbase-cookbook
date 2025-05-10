@@ -17,7 +17,6 @@ This cookbook installs and configures Apache HBase - the Hadoop database, a dist
 - Chef 17.0+
 
 ### Cookbooks
-- `java` - HBase requires Java
 - `ark` - Used for installing HBase from binary releases
 
 ## Features
@@ -115,6 +114,29 @@ node['hbase']['metrics']['graphite']['host'] = 'metrics.example.com'
 node['hbase']['metrics']['graphite']['port'] = 2003
 node['hbase']['metrics']['graphite']['prefix'] = 'prod.hbase'
 ```
+
+### Java Compatibility
+
+This cookbook includes a dedicated recipe for handling Java compatibility. HBase officially supports Java 8, with preliminary support for Java 11 and Java 17.
+
+```ruby
+# Set Java version (8, 11, or 17)
+node['hbase']['java']['version'] = '11'
+
+# Optionally, set a custom JAVA_HOME (if not set, it will be auto-detected)
+node['hbase']['java_home'] = '/path/to/java/home'
+```
+
+The cookbook automatically:
+1. Detects appropriate Java home location based on platform and Java version
+2. Installs the appropriate JDK package for your platform
+3. Configures JAVA_HOME and adds it to the system environment
+4. Verifies Java installation before proceeding with HBase installation
+
+Supported Java versions per HBase version:
+- HBase 2.5.x: Java 8 (officially), Java 11, 17 (preliminary)
+- HBase 2.4.x: Java 8 (officially), Java 11 (preliminary)
+- HBase 2.3.x: Java 8 only
 
 ### Advanced JVM Configuration
 

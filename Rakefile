@@ -1,6 +1,7 @@
 require 'rspec/core/rake_task'
 require 'cookstyle'
 require 'rubocop/rake_task'
+require 'yard'
 
 # Style tests. Cookstyle (rubocop)
 namespace :style do
@@ -42,9 +43,33 @@ namespace :integration do
   end
 end
 
+# Documentation
+namespace :docs do
+  desc 'Generate documentation with YARD'
+  YARD::Rake::YardocTask.new do |t|
+    t.files = ['**/*.rb', '-', 'README.md', 'CHANGELOG.md', 'LICENSE']
+    t.options = ['--markup-provider=redcarpet', '--markup=markdown']
+  end
+end
+
+desc 'Run test-kitchen with Vagrant'
+task :vagrant do
+  ENV['KITCHEN_YAML'] = 'kitchen.yml'
+  sh 'kitchen test'
+end
+
+desc 'Run test-kitchen with Docker'
+task :docker do
+  ENV['KITCHEN_YAML'] = 'kitchen.docker.yml'
+  sh 'kitchen test'
+end
+
 # Default tasks
 desc 'Run all tests except Kitchen'
 task default: ['style', 'spec']
 
 desc 'Run all tests'
 task test: ['style', 'spec', 'integration:docker']
+
+desc 'Generate documentation'
+task doc: ['docs:yard']

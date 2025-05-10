@@ -1,5 +1,5 @@
 # Basic configuration
-default['hbase']['version'] = '2.5.5'
+default['hbase']['version'] = '2.5.11'
 default['hbase']['mirror'] = 'https://downloads.apache.org/hbase'
 default['hbase']['checksum'] = nil # Set specific version checksum here
 default['hbase']['install_dir'] = '/opt/hbase'
@@ -12,8 +12,9 @@ default['hbase']['uid'] = 2313
 default['hbase']['gid'] = 2313
 default['hbase']['log_level'] = 'INFO'
 
-# Java options
-default['hbase']['java_home'] = '/usr/lib/jvm/java-11-openjdk'
+# Java options - HBase officially supports Java 8, with preliminary support for Java 11 and 17
+default['hbase']['java']['version'] = '11'
+default['hbase']['java_home'] = nil # Will be auto-detected based on platform and version
 default['hbase']['java_opts'] = '-Xmx1024m -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200'
 
 # System limits
@@ -77,6 +78,7 @@ default['hbase']['security']['kerberos']['server_principal'] = 'hbase/_HOST@EXAM
 default['hbase']['security']['kerberos']['regionserver_principal'] = 'hbase/_HOST@EXAMPLE.COM'
 
 # HDFS settings if using HDFS
+default['hbase']['hadoop']['version'] = '3.3.5'
 default['hbase']['hadoop']['hdfs_site'] = {}
 default['hbase']['hadoop']['core_site'] = {}
 

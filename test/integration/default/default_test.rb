@@ -113,8 +113,34 @@ control 'hbase-3.0' do
   end
 end
 
-# Services
+# Java Installation
 control 'hbase-4.0' do
+  impact 1.0
+  title 'Java Installation for HBase'
+  desc 'Validates that Java is properly installed and configured for HBase'
+  
+  # Check Java installation
+  describe command('java -version') do
+    its('exit_status') { should eq 0 }
+    its('stderr') { should match /(openjdk|jdk) version "(1\.8|8|11|17)"/ }
+  end
+  
+  # Check JAVA_HOME environment
+  describe file('/etc/profile.d/java_home.sh') do
+    it { should exist }
+    its('mode') { should cmp '0755' }
+    its('content') { should match /export JAVA_HOME=/ }
+  end
+  
+  # Check HBase env configuration has Java home
+  describe file('/etc/hbase/conf/hbase-env.sh') do
+    it { should exist }
+    its('content') { should include 'JAVA_HOME=' }
+  end
+end
+
+# Services
+control 'hbase-5.0' do
   impact 1.0
   title 'HBase Services'
   desc 'Validates that HBase services are properly configured'
