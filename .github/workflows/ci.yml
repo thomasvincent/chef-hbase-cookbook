@@ -43,24 +43,54 @@ jobs:
     - name: Run ChefSpec
       run: bundle exec rspec spec/
       
-  docker-test:
+  docker-test-ubuntu:
     needs: unit-test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-20.04', 'ubuntu-22.04', 'debian-11', 'almalinux-8']
         suite: ['default']
+        os: ['ubuntu-20.04', 'ubuntu-22.04']
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Docker Buildx
+    - name: Set up Docker
       uses: docker/setup-buildx-action@v2
+    - name: Install chef tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https ca-certificates
+        wget -qO- https://packages.chef.io/chef.asc | sudo apt-key add -
+        sudo apt-add-repository "deb https://packages.chef.io/repos/apt/stable focal main"
+        sudo apt-get update
+        sudo apt-get install -y chef-workstation
     - name: Run Test Kitchen
       run: |
-        docker run --rm -v $(pwd):/cookbook -w /cookbook ruby:2.7 /bin/bash -c "
-          apt-get update && apt-get install -y curl
-          gem install bundler
-          bundle config set --local without development
-          bundle install
-          bundle exec kitchen verify ${{ matrix.os }}-${{ matrix.suite }} || true
-        "
+        echo 'driver:' > .kitchen.local.yml
+        echo '  name: dokken' >> .kitchen.local.yml
+        sudo -E KITCHEN_YAML=kitchen.docker.yml kitchen test ${{ matrix.os }}-${{ matrix.suite }}
+  
+  docker-test-rhel:
+    needs: unit-test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ['default']
+        os: ['almalinux-8', 'amazonlinux-2']
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+    - name: Install chef tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https ca-certificates
+        wget -qO- https://packages.chef.io/chef.asc | sudo apt-key add -
+        sudo apt-add-repository "deb https://packages.chef.io/repos/apt/stable focal main"
+        sudo apt-get update
+        sudo apt-get install -y chef-workstation
+    - name: Run Test Kitchen
+      run: |
+        echo 'driver:' > .kitchen.local.yml
+        echo '  name: dokken' >> .kitchen.local.yml
+        sudo -E KITCHEN_YAML=kitchen.docker.yml kitchen test ${{ matrix.os }}-${{ matrix.suite }}
