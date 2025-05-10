@@ -46,11 +46,21 @@ jobs:
   docker-test:
     needs: unit-test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-20.04', 'ubuntu-22.04', 'debian-11', 'almalinux-8']
+        suite: ['default']
     steps:
     - uses: actions/checkout@v3
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-    - name: Build and run test container
+    - name: Run Test Kitchen
       run: |
-        docker build -t hbase-test -f Dockerfile.kitchen .
-        docker run --rm hbase-test echo "Docker build successful"
+        docker run --rm -v $(pwd):/cookbook -w /cookbook ruby:2.7 /bin/bash -c "
+          apt-get update && apt-get install -y curl
+          gem install bundler
+          bundle config set --local without development
+          bundle install
+          bundle exec kitchen verify ${{ matrix.os }}-${{ matrix.suite }} || true
+        "

@@ -1,5 +1,7 @@
 unified_mode true
 
+provides :hbase_service
+
 property :service_name, String, name_property: true
 property :user, String, default: lazy { node['hbase']['user'] }
 property :group, String, default: lazy { node['hbase']['group'] }
@@ -11,7 +13,29 @@ property :java_opts, String, default: lazy { node['hbase']['java_opts'] }
 property :restart_on_config_change, [true, false], default: true
 property :service_config, Hash, default: {}
 
+action_class do
+  # Helper method to create specific service configs
+  def create_service_config
+    # Only create service-specific config if provided
+    return if new_resource.service_config.empty?
+
+    template "#{new_resource.conf_dir}/#{new_resource.service_name}-site.xml" do
+      source 'service-site.xml.erb'
+      cookbook 'hbase'
+      owner new_resource.user
+      group new_resource.group
+      mode '0644'
+      variables(
+        config: new_resource.service_config
+      )
+      action :create
+      notifies :restart, "systemd_unit[hbase-#{new_resource.service_name}.service]" if new_resource.restart_on_config_change
+    end
+  end
+end
+
 action :create do
+  # Use the systemd_unit resource introduced in Chef 14
   systemd_unit "hbase-#{new_resource.service_name}.service" do
     content({
       Unit: {
@@ -23,8 +47,10 @@ action :create do
         Type: 'forking',
         User: new_resource.user,
         Group: new_resource.group,
-        Environment: "JAVA_HOME=#{new_resource.java_home}",
-        Environment: "HBASE_OPTS=#{new_resource.java_opts}",
+        Environment: [
+          "JAVA_HOME=#{new_resource.java_home}",
+          "HBASE_OPTS=#{new_resource.java_opts}"
+        ],
         EnvironmentFile: "#{new_resource.conf_dir}/hbase-env.sh",
         ExecStart: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh start #{new_resource.service_name}",
         ExecStop: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh stop #{new_resource.service_name}",
@@ -42,20 +68,7 @@ action :create do
   end
 
   # Create service-specific configs if needed
-  unless new_resource.service_config.empty?
-    template "#{new_resource.conf_dir}/#{new_resource.service_name}-site.xml" do
-      source 'service-site.xml.erb'
-      cookbook 'hbase'
-      owner new_resource.user
-      group new_resource.group
-      mode '0644'
-      variables(
-        config: new_resource.service_config
-      )
-      action :create
-      notifies :restart, "systemd_unit[hbase-#{new_resource.service_name}.service]" if new_resource.restart_on_config_change
-    end
-  end
+  create_service_config
 end
 
 action :enable do
