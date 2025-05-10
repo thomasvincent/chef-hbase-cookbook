@@ -1,0 +1,138 @@
+---
+driver:
+  name: docker
+  use_sudo: false
+  privileged: true
+  provision_command:
+    - systemctl enable systemd-logind.service
+    - systemctl enable systemd-journald.service
+
+provisioner:
+  name: chef_zero
+  product_name: chef
+  product_version: 18.2
+  chef_license: accept
+  enforce_idempotency: true
+  multiple_converge: 2
+  deprecations_as_errors: true
+  data_bags_path: "test/integration/data_bags"
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-22.04
+    driver_config:
+      image: dokken/ubuntu-22.04
+      pid_one_command: /bin/systemd
+
+  - name: centos-stream-8
+    driver_config:
+      image: dokken/centos-stream-8
+      pid_one_command: /bin/systemd
+
+  - name: debian-11
+    driver_config:
+      image: dokken/debian-11
+      pid_one_command: /bin/systemd
+
+  - name: amazonlinux-2
+    driver_config:
+      image: dokken/amazonlinux-2
+      pid_one_command: /bin/systemd
+
+suites:
+  - name: default
+    run_list:
+      - recipe[hbase::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+    attributes:
+      hbase:
+        config:
+          hbase.rootdir: 'file:///var/hbase'
+          hbase.cluster.distributed: false
+
+  - name: distributed
+    run_list:
+      - recipe[hbase::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+        - test/integration/distributed
+    attributes:
+      hbase:
+        config:
+          hbase.rootdir: 'file:///var/hbase'
+          hbase.cluster.distributed: true
+        topology:
+          role: 'master'
+          regionservers:
+            - localhost
+
+  - name: thrift
+    run_list:
+      - recipe[hbase::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+        - test/integration/thrift
+    attributes:
+      hbase:
+        config:
+          hbase.rootdir: 'file:///var/hbase'
+          hbase.cluster.distributed: true
+        services:
+          thrift:
+            enabled: true
+        topology:
+          role: 'master'
+          regionservers:
+            - localhost
+
+  - name: rest
+    run_list:
+      - recipe[hbase::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+        - test/integration/rest
+    attributes:
+      hbase:
+        config:
+          hbase.rootdir: 'file:///var/hbase'
+          hbase.cluster.distributed: true
+        services:
+          rest:
+            enabled: true
+        topology:
+          role: 'master'
+          regionservers:
+            - localhost
+
+  - name: kerberos
+    run_list:
+      - recipe[hbase::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+        - test/integration/kerberos
+    attributes:
+      hbase:
+        config:
+          hbase.rootdir: 'file:///var/hbase'
+          hbase.cluster.distributed: true
+          hbase.security.authentication: 'kerberos'
+          hbase.security.authorization: true
+        security:
+          authentication: 'kerberos'
+          authorization: true
+          kerberos:
+            principal: 'hbase/_HOST'
+            keytab: '/etc/hbase/conf/hbase.keytab'
+            realm: 'TEST.REALM'
+        topology:
+          role: 'master'
+          regionservers:
+            - localhost
