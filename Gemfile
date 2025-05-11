@@ -8,9 +8,6 @@ gem 'kitchen-inspec', '~> 2.7'
 
 group :development do
   gem 'rb-readline'
-  gem 'guard'
-  gem 'guard-kitchen'
-  gem 'guard-rspec'
   gem 'rake'
 end
 
