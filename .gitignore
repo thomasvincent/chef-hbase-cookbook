@@ -80,3 +80,5 @@ Thumbs.db
 
 # Cookbook build files
 /dist/
+
+**/.claude/settings.local.json
