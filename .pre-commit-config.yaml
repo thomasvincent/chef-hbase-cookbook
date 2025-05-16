@@ -1,0 +1,27 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: https://github.com/reviewdog/action-shellcheck
+    rev: v1.17.0
+    hooks:
+      - id: shellcheck
+
+  - repo: local
+    hooks:
+      - id: cookstyle
+        name: cookstyle
+        description: Cookstyle linting for Chef
+        entry: cookstyle
+        language: ruby
+        files: \.(rb)$
+        types: [file, ruby]
+        pass_filenames: true
+        require_serial: true
+EOF < /dev/null

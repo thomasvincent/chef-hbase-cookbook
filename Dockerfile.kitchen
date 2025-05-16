@@ -15,7 +15,7 @@ RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     rm get-docker.sh
 
 # Install Chef Workstation components
-RUN gem install chef -v '~> 17.10' --no-document && \
+RUN gem install chef -v '~> 18.2' --no-document && \
     gem install test-kitchen -v '~> 3.5' --no-document && \
     gem install kitchen-dokken -v '~> 2.20' --no-document && \
     gem install kitchen-inspec -v '~> 2.7' --no-document && \

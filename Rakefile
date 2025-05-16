@@ -3,21 +3,23 @@ require 'cookstyle'
 require 'rubocop/rake_task'
 require 'yard'
 
-# Style tests. Cookstyle (rubocop)
+# Style tests using Cookstyle
 namespace :style do
-  desc 'Run Ruby style checks'
-  RuboCop::RakeTask.new(:ruby) do |task|
+  desc 'Run Chef style checks via Cookstyle'
+  RuboCop::RakeTask.new(:chef) do |task|
     task.options << '--display-cop-names'
+    task.options << '--format progress'
   end
 end
 
 desc 'Run all style checks'
-task style: ['style:ruby']
+task style: ['style:chef']
 
 # Rspec and ChefSpec
-desc 'Run ChefSpec examples'
+desc 'Run ChefSpec unit tests'
 RSpec::Core::RakeTask.new(:spec) do |task|
   task.rspec_opts = '--color --format documentation'
+  task.pattern = 'spec/unit/**/*_spec.rb'
 end
 
 # Integration tests with Kitchen
@@ -28,7 +30,7 @@ namespace :integration do
   end
 
   desc 'Run Test Kitchen with Docker for a specific platform'
-  task :docker_platform, [:platform] do |_t, args|
+  task :platform, [:platform] do |_t, args|
     sh "KITCHEN_YAML=kitchen.docker.yml kitchen test #{args[:platform]}"
   end
 
@@ -37,9 +39,14 @@ namespace :integration do
     sh "KITCHEN_YAML=kitchen.docker.yml kitchen test #{args[:suite]}"
   end
 
-  desc 'Run a specific Test Kitchen instance'
-  task :instance, [:instance] do |_t, args|
-    sh "KITCHEN_YAML=kitchen.docker.yml kitchen test #{args[:instance]}"
+  desc 'Run Test Kitchen converge only (faster for development)'
+  task :converge do
+    sh 'KITCHEN_YAML=kitchen.docker.yml kitchen converge'
+  end
+  
+  desc 'Run Test Kitchen verify only (without converge)'
+  task :verify do
+    sh 'KITCHEN_YAML=kitchen.docker.yml kitchen verify'
   end
 end
 
@@ -52,6 +59,7 @@ namespace :docs do
   end
 end
 
+# Simplify kitchen commands
 desc 'Run test-kitchen with Vagrant'
 task :vagrant do
   ENV['KITCHEN_YAML'] = 'kitchen.yml'
@@ -64,12 +72,19 @@ task :docker do
   sh 'kitchen test'
 end
 
+# Add linting task for GitHub Actions compatibility
+desc 'Run Cookstyle'
+task lint: ['style:chef']
+
 # Default tasks
-desc 'Run all tests except Kitchen'
+desc 'Run all tests except Kitchen (fast)'
 task default: ['style', 'spec']
 
-desc 'Run all tests'
-task test: ['style', 'spec', 'integration:docker']
+desc 'Run all tests including Kitchen (slower, comprehensive)'
+task all: ['style', 'spec', 'integration:docker']
+
+desc 'Run CI pipeline (style, spec, integration)'
+task ci: ['style', 'spec', 'integration:docker']
 
 desc 'Generate documentation'
 task doc: ['docs:yard']
