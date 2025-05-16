@@ -24,13 +24,5 @@ user node['hbase']['user'] do
   action :create
 end
 
-# Configure system limits for the HBase user
-template '/etc/security/limits.d/hbase.conf' do
-  source 'limits.conf.erb'
-  mode '0644'
-  variables(
-    user: node['hbase']['user'],
-    nofile: node['hbase']['limits']['nofile'],
-    nproc: node['hbase']['limits']['nproc']
-  )
-end
+# System limits are configured in the limits recipe
+include_recipe 'hbase::limits'

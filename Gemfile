@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'chef', '~> 17.10'
+gem 'chef', '~> 18.2'
 gem 'cookstyle', '~> 7.32'
 gem 'test-kitchen', '~> 3.5'
 gem 'kitchen-dokken', '~> 2.20'

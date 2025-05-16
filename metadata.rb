@@ -4,7 +4,7 @@ maintainer_email 'thomasvincent@github.com'
 license          'Apache-2.0'
 description      'Installs/Configures Apache HBase'
 version          '1.1.0'
-chef_version     '>= 17.0'
+chef_version     '>= 18.0'
 
 supports 'ubuntu', '>= 20.04'
 supports 'debian', '>= 11.0'

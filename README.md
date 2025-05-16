@@ -14,7 +14,7 @@ This cookbook installs and configures Apache HBase - the Hadoop database, a dist
 - Fedora 36+
 
 ### Chef
-- Chef 17.0+
+- Chef 18.0+
 
 ### Cookbooks
 - `ark` - Used for installing HBase from binary releases

@@ -2,7 +2,7 @@
 driver:
   name: dokken
   privileged: true
-  chef_version: 17.10
+  chef_version: 18.2
   chef_license: accept-silent
   env:
     - CHEF_LICENSE=accept-silent
