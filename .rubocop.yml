@@ -1,0 +1,189 @@
+---
+# This is the RuboCop configuration used for Chef cookbooks
+# It extends the default Cookstyle configuration with additional rules
+
+require:
+  - rubocop-chef
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.0
+  Exclude:
+    - 'vendor/**/*'
+    - 'bin/**/*'
+    - '.git/**/*'
+    - 'cookbooks/**/*'
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+  NewCops: enable
+
+# Chef-specific rules
+ChefDeprecations:
+  Enabled: true
+
+ChefModernize:
+  Enabled: true
+
+ChefRedundantCode:
+  Enabled: true
+
+ChefStyle:
+  Enabled: true
+
+# RSpec configuration for ChefSpec
+RSpec:
+  Language:
+    Expectations:
+      IncludeChain:
+        Transformers:
+          - LET_TRANSFORM
+
+RSpec/FilePath:
+  Enabled: false
+
+# Performance optimizations
+Performance:
+  Enabled: true
+
+# Layout customizations
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - '**/attributes/**/*.rb'
+    - '**/metadata.rb'
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: true
+
+Layout/SpaceAroundOperators:
+  Enabled: true
+
+# Naming conventions
+Naming/FileName:
+  Enabled: true
+  Exclude:
+    - '**/metadata.rb'
+    - '**/Berksfile'
+    - '**/Gemfile'
+    - '**/Rakefile'
+    - '**/Policyfile.rb'
+    - '**/Vagrantfile'
+
+# Style preferences
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/NumericLiterals:
+  Enabled: true
+  MinDigits: 6
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+# Metrics
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+    - 'test/**/*_test.rb'
+    - 'resources/**/*.rb'
+    - 'libraries/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude:
+    - 'test/**/*'
+
+Metrics/ClassLength:
+  Max: 300
+  Exclude:
+    - 'test/**/*'
+    - 'libraries/**/*.rb'
+
+# Chef-specific method names are allowed
+Naming/PredicateName:
+  Enabled: true
+  NamePrefixBlacklist:
+    - is_
+    - has_
+  AllowedMethods:
+    - is_property_defined?
+    - is_windows?
+    - is_linux?
+
+# Custom Chef cops
+Chef/Correctness/MetadataMissingName:
+  Enabled: true
+
+Chef/Correctness/ResourceSetsNameProperty:
+  Enabled: true
+
+Chef/Deprecations/ChefSpecCoverageReport:
+  Enabled: true
+
+Chef/Modernize/DependsOnChefDk:
+  Enabled: true
+  
+Chef/Modernize/DependsOnSoloSearch:
+  Enabled: true
+  
+Chef/Modernize/PowershellInstallWindowsFeature:
+  Enabled: true
+  
+Chef/Modernize/ResourceNameFromInitialize:
+  Enabled: true
+  
+Chef/Modernize/UnnecessaryDependsChef:
+  Enabled: true
+  
+Chef/Modernize/UsesZsphereUrl:
+  Enabled: true
+
+Chef/Modernize/WindowsScriptPriv:
+  Enabled: true
+  
+Chef/Sharing/CustomResourceFromFiles:
+  Enabled: true
+  
+Chef/Sharing/EmptyCopyrightComments:
+  Enabled: true
+  
+Chef/Sharing/IncludePropertyDescriptions:
+  Enabled: true
+  
+Chef/Sharing/IncludeResourceDescriptions:
+  Enabled: true
+  
+Chef/Sharing/InsecureCookbookURL:
+  Enabled: true
+
+Chef/Style/AttributeKeys:
+  AutoCorrect: true
+  EnforcedStyle: symbols
+
+Chef/Style/ChefWhaaat:
+  Enabled: true
+  
+Chef/Style/CommentFormat:
+  Enabled: true
+  
+Chef/Style/CommentSentenceSpacing:
+  Enabled: true
+  
+Chef/Style/DefaultCopyrightComments:
+  Enabled: true
+  
+Chef/Style/FileMode:
+  EnforcedStyle: numeric
+  
+Chef/Style/ImmediateNotificationTiming:
+  Enabled: true

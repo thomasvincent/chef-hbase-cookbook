@@ -1,36 +1,63 @@
 ---
+# Pre-commit hooks configuration for Chef cookbook development
+# See https://pre-commit.com for more information
+
+default_stages: [commit]
+fail_fast: false
+
 repos:
+  # General file formatting and cleaning
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
-      - id: check-yaml
+      - id: mixed-line-ending
+        args: [--fix=lf]
       - id: check-added-large-files
-      - id: detect-private-key
+        args: [--maxkb=500]
+      - id: check-yaml
+        exclude: ^templates/
+      - id: check-json
+        exclude: ^templates/
+      - id: pretty-format-json
+        args: [--autofix, --indent=2]
+        exclude: ^templates/
       - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: detect-private-key
       - id: no-commit-to-branch
-        args: [--branch, master, --branch, main]
+        args: [--branch, main, --branch, master]
+      - id: check-case-conflict
+      - id: forbid-new-submodules
+      - id: check-symlinks
 
-  - repo: https://github.com/reviewdog/action-shellcheck
-    rev: v1.17.0
+  # Shell script linting
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
     hooks:
       - id: shellcheck
+        args: [--severity=warning]
+        types: [shell]
 
+  # Chef-specific hooks
   - repo: local
     hooks:
       - id: cookstyle
-        name: cookstyle
-        description: Cookstyle linting for Chef
+        name: Cookstyle
+        description: Cookstyle linting for Chef cookbooks and resources
         entry: bundle exec cookstyle
         language: ruby
         files: \.(rb)$
         types: [file, ruby]
         pass_filenames: true
         require_serial: true
+        args: [--display-cop-names, --extra-details]
         
       - id: check-github-workflows
-        name: check-github-workflows
+        name: Check GitHub Workflows
         description: Check GitHub Actions workflows
         entry: ruby -e 'require "yaml"; ARGV.each do |file| begin; YAML.load_file(file); rescue => e; puts "Error in #{file}: #{e}"; exit(1); end; end'
         language: ruby
@@ -38,12 +65,155 @@ repos:
         types: [file, yaml]
         pass_filenames: true
         
-      - id: rake-test
-        name: chef-spec
-        description: Run unit tests
+      - id: chef-spec
+        name: ChefSpec Tests
+        description: Run unit tests for Chef cookbook
         entry: bundle exec rake spec
         language: ruby
         types: [ruby]
         pass_filenames: false
         require_serial: true
         stages: [push]
+        
+      - id: kitchen-yml-validate
+        name: Test Kitchen YAML validation
+        description: Validate Test Kitchen configuration files
+        entry: ruby -ryaml -e "puts 'Validating kitchen.yml'; YAML.load_file('kitchen.yml'); puts 'Kitchen YAML valid'"
+        language: ruby
+        files: ^kitchen.*\.ya?ml$
+        pass_filenames: false
+      
+      - id: metadata-validate
+        name: Metadata validation
+        description: Validate metadata.rb format and version
+        entry: |
+          ruby -e '
+            begin
+              content = File.read("metadata.rb")
+              if content =~ /version\s+["\'](\d+\.\d+\.\d+)["\']/ 
+                puts "✅ Valid metadata version: #{$1}"
+                exit 0
+              else
+                puts "❌ No valid version found in metadata.rb"
+                exit 1
+              end
+            rescue => e
+              puts "Error: #{e.message}"
+              exit 1
+            end
+          '
+        language: ruby
+        files: ^metadata\.rb$
+        pass_filenames: false
+        
+      - id: inspec-syntax
+        name: InSpec syntax check
+        description: Check InSpec test syntax
+        entry: ruby -e "Dir.glob('test/integration/**/*_test.rb').each { |f| system(\"ruby -c #{f}\") or exit(1) }"
+        language: ruby
+        pass_filenames: false
+        always_run: true
+        stages: [push]
+      
+      - id: check-deprecated-resources
+        name: Check for deprecated Chef resources
+        description: Scan for deprecated Chef resources
+        entry: |
+          ruby -e '
+            deprecated = [
+              "chef_gem",
+              "easy_install_package", 
+              "manage_home",
+              "supports", 
+              "erl_call",
+              "deploy"
+            ]
+            found = false
+            Dir.glob("**/*.rb").each do |file|
+              next if file.start_with?("vendor/", "spec/")
+              content = File.read(file)
+              deprecated.each do |resource|
+                if content.match?(/#{resource}/)
+                  puts "Deprecated resource found in #{file}: #{resource}"
+                  found = true
+                end
+              end
+            end
+            exit(1) if found
+          '
+        language: ruby
+        pass_filenames: false
+        
+  # Check Markdown formatting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        args: [--fix]
+        exclude: ^CHANGELOG.md$
+
+  # Secrets scanning
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.1
+    hooks:
+      - id: gitleaks
+
+  # Additional Chef hooks
+  - repo: local
+    hooks:
+      - id: ensure-license-file
+        name: Ensure LICENSE file exists
+        entry: test -f LICENSE
+        language: system
+        pass_filenames: false
+        
+      - id: ensure-changelog-updated
+        name: Ensure CHANGELOG.md is updated
+        description: Check that CHANGELOG.md contains entry for current version
+        entry: |
+          ruby -e '
+            begin
+              metadata = File.read("metadata.rb")
+              version = metadata.match(/version\s+["\'](\d+\.\d+\.\d+)["\']/)&.[](1)
+              
+              if version.nil?
+                puts "❌ No version in metadata.rb"
+                exit(1)
+              end
+              
+              changelog = File.read("CHANGELOG.md")
+              if !changelog.include?("## [#{version}]") && !changelog.include?("## #{version}")
+                puts "❌ Version #{version} not found in CHANGELOG.md"
+                exit(1)
+              else
+                puts "✅ CHANGELOG.md contains entry for version #{version}"
+                exit(0)
+              end
+            rescue => e
+              puts "Error: #{e.message}"
+              exit(1)
+            end
+          '
+        language: ruby
+        files: ^(metadata\.rb|CHANGELOG\.md)$
+        stages: [push]
+        pass_filenames: false
+        
+      - id: ensure-no-puts
+        name: Ensure no puts statements in recipes
+        description: Check that recipes don't contain puts statements (use Chef::Log instead)
+        entry: |
+          ruby -e '
+            puts_found = false
+            Dir.glob("recipes/**/*.rb").each do |file|
+              content = File.read(file)
+              if content =~ /\bputs\b/
+                line_num = content.split("\n").find_index { |line| line =~ /\bputs\b/ } + 1
+                puts "#{file}:#{line_num}: puts statement found - use Chef::Log.info instead"
+                puts_found = true
+              end
+            end
+            exit(puts_found ? 1 : 0)
+          '
+        language: ruby
+        pass_filenames: false

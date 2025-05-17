@@ -1,6 +1,20 @@
 ---
 version: 2
 updates:
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "ci"
+      - "dependencies"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+  # Maintain dependencies for Ruby gems
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
@@ -10,13 +24,29 @@ updates:
       - "dependencies"
       - "ruby"
     versioning-strategy: lockfile-only
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
     
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "github_actions"
-EOF < /dev/null
+  # Auto merge minor and patch updates
+  # This requires additional GitHub repo settings
+  groups:
+    dev-dependencies:
+      patterns:
+        - "rubocop*"
+        - "chefstyle"
+        - "test-kitchen"
+      update-types:
+        - "minor"
+        - "patch"
+    
+    production-dependencies:
+      patterns:
+        - "chef"
+        - "chef-*"
+        - "inspec"
+      update-types:
+        - "patch"
