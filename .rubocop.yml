@@ -11,12 +11,12 @@ plugins:
 AllCops:
   TargetRubyVersion: 3.0
   Exclude:
-    - 'vendor/**/*'
-    - 'bin/**/*'
-    - '.git/**/*'
-    - 'cookbooks/**/*'
-    - 'node_modules/**/*'
-    - 'tmp/**/*'
+    - "vendor/**/*"
+    - "bin/**/*"
+    - ".git/**/*"
+    - "cookbooks/**/*"
+    - "node_modules/**/*"
+    - "tmp/**/*"
   NewCops: enable
 
 # Chef-specific rules
@@ -55,8 +55,8 @@ Performance:
 Layout/LineLength:
   Max: 120
   Exclude:
-    - '**/attributes/**/*.rb'
-    - '**/metadata.rb'
+    - "**/attributes/**/*.rb"
+    - "**/metadata.rb"
 
 Layout/EmptyLineAfterGuardClause:
   Enabled: true
@@ -68,12 +68,12 @@ Layout/SpaceAroundOperators:
 Naming/FileName:
   Enabled: true
   Exclude:
-    - '**/metadata.rb'
-    - '**/Berksfile'
-    - '**/Gemfile'
-    - '**/Rakefile'
-    - '**/Policyfile.rb'
-    - '**/Vagrantfile'
+    - "**/metadata.rb"
+    - "**/Berksfile"
+    - "**/Gemfile"
+    - "**/Rakefile"
+    - "**/Policyfile.rb"
+    - "**/Vagrantfile"
 
 # Style preferences
 Style/Documentation:
@@ -98,21 +98,21 @@ Metrics/AbcSize:
 
 Metrics/BlockLength:
   Exclude:
-    - 'spec/**/*_spec.rb'
-    - 'test/**/*_test.rb'
-    - 'resources/**/*.rb'
-    - 'libraries/**/*.rb'
+    - "spec/**/*_spec.rb"
+    - "test/**/*_test.rb"
+    - "resources/**/*.rb"
+    - "libraries/**/*.rb"
 
 Metrics/MethodLength:
   Max: 30
   Exclude:
-    - 'test/**/*'
+    - "test/**/*"
 
 Metrics/ClassLength:
   Max: 300
   Exclude:
-    - 'test/**/*'
-    - 'libraries/**/*.rb'
+    - "test/**/*"
+    - "libraries/**/*.rb"
 
 # Chef-specific method names are allowed
 Naming/PredicateName:
@@ -132,9 +132,9 @@ Chef/Style/AttributeKeys:
 
 Chef/Style/CommentFormat:
   Enabled: true
-  
+
 Chef/Style/CommentSentenceSpacing:
   Enabled: true
-  
+
 Chef/Style/FileMode:
   Enabled: true

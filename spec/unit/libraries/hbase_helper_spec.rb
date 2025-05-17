@@ -67,7 +67,7 @@ describe HBase::Helper do
       # Should have all default values
       expect(result['hbase.rootdir']).to eq('file:///var/hbase')
       expect(result['hbase.zookeeper.quorum']).to eq('localhost')
-      expect(result['hbase.cluster.distributed']).to eq(false)
+      expect(result['hbase.cluster.distributed']).to be(false)
       
       # Should preserve custom values
       expect(result['custom.property']).to eq('custom_value')
@@ -85,7 +85,7 @@ describe HBase::Helper do
       
       # Other defaults should be preserved
       expect(result['hbase.zookeeper.quorum']).to eq('localhost')
-      expect(result['hbase.cluster.distributed']).to eq(false)
+      expect(result['hbase.cluster.distributed']).to be(false)
     end
   end
 

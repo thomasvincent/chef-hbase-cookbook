@@ -12,7 +12,7 @@ describe 'hbase::install' do
     end
 
     it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
+      expect { chef_run }.not_to raise_error
     end
 
     it 'creates hbase install directory' do

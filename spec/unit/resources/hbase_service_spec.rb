@@ -19,7 +19,7 @@ describe 'hbase_service' do
     end
 
     it 'creates systemd service unit' do
-      is_expected.to create_systemd_unit('hbase-master.service').with(
+      expect(subject).to create_systemd_unit('hbase-master.service').with(
         content: {
           Unit: {
             Description: 'Apache HBase Master Service',
@@ -58,7 +58,7 @@ describe 'hbase_service' do
     end
 
     it 'creates service-specific config file' do
-      is_expected.to create_template('/etc/hbase/conf/master-site.xml').with(
+      expect(subject).to create_template('/etc/hbase/conf/master-site.xml').with(
         owner: 'hbase',
         group: 'hbase',
         mode: '0644'
@@ -74,7 +74,7 @@ describe 'hbase_service' do
     end
 
     it 'starts the service' do
-      is_expected.to start_service('hbase-master')
+      expect(subject).to start_service('hbase-master')
     end
   end
 
@@ -86,7 +86,7 @@ describe 'hbase_service' do
     end
 
     it 'enables the service' do
-      is_expected.to enable_service('hbase-master')
+      expect(subject).to enable_service('hbase-master')
     end
   end
 
@@ -98,7 +98,7 @@ describe 'hbase_service' do
     end
 
     it 'restarts the service' do
-      is_expected.to restart_service('hbase-master')
+      expect(subject).to restart_service('hbase-master')
     end
   end
 
@@ -110,7 +110,7 @@ describe 'hbase_service' do
     end
 
     it 'stops the service' do
-      is_expected.to stop_service('hbase-master')
+      expect(subject).to stop_service('hbase-master')
     end
   end
 
@@ -122,7 +122,7 @@ describe 'hbase_service' do
     end
 
     it 'disables the service' do
-      is_expected.to disable_service('hbase-master')
+      expect(subject).to disable_service('hbase-master')
     end
   end
 end

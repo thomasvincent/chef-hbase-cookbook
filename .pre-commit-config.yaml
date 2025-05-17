@@ -55,7 +55,7 @@ repos:
         pass_filenames: true
         require_serial: true
         args: [--display-cop-names, --extra-details]
-        
+
       - id: check-github-workflows
         name: Check GitHub Workflows
         description: Check GitHub Actions workflows
@@ -64,7 +64,7 @@ repos:
         files: \.github/workflows/.*\.ya?ml$
         types: [file, yaml]
         pass_filenames: true
-        
+
       - id: chef-spec
         name: ChefSpec Tests
         description: Run unit tests for Chef cookbook
@@ -74,7 +74,7 @@ repos:
         pass_filenames: false
         require_serial: true
         stages: [push]
-        
+
       - id: kitchen-yml-validate
         name: Test Kitchen YAML validation
         description: Validate Test Kitchen configuration files
@@ -82,7 +82,7 @@ repos:
         language: ruby
         files: ^kitchen.*\.ya?ml$
         pass_filenames: false
-      
+
       - id: metadata-validate
         name: Metadata validation
         description: Validate metadata.rb format and version
@@ -105,7 +105,7 @@ repos:
         language: ruby
         files: ^metadata\.rb$
         pass_filenames: false
-        
+
       - id: inspec-syntax
         name: InSpec syntax check
         description: Check InSpec test syntax
@@ -114,7 +114,7 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [push]
-      
+
       - id: check-deprecated-resources
         name: Check for deprecated Chef resources
         description: Scan for deprecated Chef resources
@@ -143,7 +143,7 @@ repos:
           '
         language: ruby
         pass_filenames: false
-        
+
   # Check Markdown formatting
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.38.0
@@ -166,7 +166,7 @@ repos:
         entry: test -f LICENSE
         language: system
         pass_filenames: false
-        
+
       - id: ensure-changelog-updated
         name: Ensure CHANGELOG.md is updated
         description: Check that CHANGELOG.md contains entry for current version
@@ -198,7 +198,7 @@ repos:
         files: ^(metadata\.rb|CHANGELOG\.md)$
         stages: [push]
         pass_filenames: false
-        
+
       - id: ensure-no-puts
         name: Ensure no puts statements in recipes
         description: Check that recipes don't contain puts statements (use Chef::Log instead)

@@ -19,20 +19,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "3.2"
           bundler-cache: true
 
       - name: Install pre-commit
         uses: pre-commit/action@v3.0.1
-        
+
       - name: Run Cookstyle linter
         run: bundle exec cookstyle --display-cop-names
-      
+
       - name: Validate markdown files
         run: |
           npm install -g markdownlint-cli

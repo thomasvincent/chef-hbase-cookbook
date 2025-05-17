@@ -7,7 +7,7 @@ on:
   pull_request:
     branches: [main, master]
   schedule:
-    - cron: '0 0 * * 0'  # Run weekly to catch dependency issues
+    - cron: "0 0 * * 0" # Run weekly to catch dependency issues
 
 jobs:
   lint:
@@ -15,11 +15,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-        
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "3.2"
           bundler-cache: true
 
       - name: Install dependencies
@@ -34,11 +34,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-        
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "3.2"
           bundler-cache: true
 
       - name: Install dependencies
@@ -61,16 +61,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-22.04', 'debian-11', 'almalinux-9', 'amazonlinux-2023']
-        suite: ['default', 'distributed']
+        os: ["ubuntu-22.04", "debian-11", "almalinux-9", "amazonlinux-2023"]
+        suite: ["default", "distributed"]
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "3.2"
           bundler-cache: true
 
       - name: Set up Docker Engine
@@ -97,16 +97,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chef-version: ['18', '18.2', '18.3']
-        os: ['ubuntu-22.04']
+        chef-version: ["18", "18.2", "18.3"]
+        os: ["ubuntu-22.04"]
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "3.2"
           bundler-cache: true
 
       - name: Set up Docker Engine

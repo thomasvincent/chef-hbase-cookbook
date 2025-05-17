@@ -36,14 +36,14 @@ platforms:
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
         - RUN /usr/bin/apt-get install -y apt-utils
-        
+
   - name: ubuntu-20.04
     driver:
       image: dokken/ubuntu-20.04
       pid_one_command: /bin/systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
-        
+
   - name: ubuntu-22.04
     driver:
       image: dokken/ubuntu-22.04
@@ -58,7 +58,7 @@ platforms:
       pid_one_command: /bin/systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
-  
+
   - name: debian-11
     driver:
       image: dokken/debian-11
@@ -125,7 +125,7 @@ suites:
     attributes:
       hbase:
         config:
-          hbase.rootdir: 'file:///var/hbase'
+          hbase.rootdir: "file:///var/hbase"
           hbase.cluster.distributed: false
 
   - name: distributed
@@ -138,10 +138,10 @@ suites:
     attributes:
       hbase:
         config:
-          hbase.rootdir: 'file:///var/hbase'
+          hbase.rootdir: "file:///var/hbase"
           hbase.cluster.distributed: true
         topology:
-          role: 'master'
+          role: "master"
           regionservers:
             - localhost
 
@@ -155,13 +155,13 @@ suites:
     attributes:
       hbase:
         config:
-          hbase.rootdir: 'file:///var/hbase'
+          hbase.rootdir: "file:///var/hbase"
           hbase.cluster.distributed: true
         services:
           thrift:
             enabled: true
         topology:
-          role: 'master'
+          role: "master"
           regionservers:
             - localhost
 
@@ -175,13 +175,13 @@ suites:
     attributes:
       hbase:
         config:
-          hbase.rootdir: 'file:///var/hbase'
+          hbase.rootdir: "file:///var/hbase"
           hbase.cluster.distributed: true
         services:
           rest:
             enabled: true
         topology:
-          role: 'master'
+          role: "master"
           regionservers:
             - localhost
 
@@ -195,18 +195,18 @@ suites:
     attributes:
       hbase:
         config:
-          hbase.rootdir: 'file:///var/hbase'
+          hbase.rootdir: "file:///var/hbase"
           hbase.cluster.distributed: true
-          hbase.security.authentication: 'kerberos'
+          hbase.security.authentication: "kerberos"
           hbase.security.authorization: true
         security:
-          authentication: 'kerberos'
+          authentication: "kerberos"
           authorization: true
           kerberos:
-            principal: 'hbase/_HOST'
-            keytab: '/etc/hbase/conf/hbase.keytab'
-            realm: 'TEST.REALM'
+            principal: "hbase/_HOST"
+            keytab: "/etc/hbase/conf/hbase.keytab"
+            realm: "TEST.REALM"
         topology:
-          role: 'master'
+          role: "master"
           regionservers:
             - localhost

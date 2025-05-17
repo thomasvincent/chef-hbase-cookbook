@@ -20,7 +20,7 @@ describe 'hbase_config' do
     end
 
     it 'creates parent directory if needed' do
-      is_expected.to create_directory('/etc/hbase/conf').with(
+      expect(subject).to create_directory('/etc/hbase/conf').with(
         owner: 'hbase',
         group: 'hbase',
         mode: '0755',
@@ -29,7 +29,7 @@ describe 'hbase_config' do
     end
 
     it 'creates the config file' do
-      is_expected.to create_template('/etc/hbase/conf/test-site.xml').with(
+      expect(subject).to create_template('/etc/hbase/conf/test-site.xml').with(
         source: 'hbase-site.xml.erb',
         cookbook: 'hbase',
         owner: 'hbase',
@@ -54,7 +54,7 @@ describe 'hbase_config' do
     end
 
     it 'creates the env file with correct template' do
-      is_expected.to create_template('/etc/hbase/conf/test-env.sh').with(
+      expect(subject).to create_template('/etc/hbase/conf/test-env.sh').with(
         source: 'hbase-env.sh.erb',
         cookbook: 'hbase',
         owner: 'hbase',
@@ -79,7 +79,7 @@ describe 'hbase_config' do
     end
 
     it 'creates the properties file with correct template' do
-      is_expected.to create_template('/etc/hbase/conf/test.properties').with(
+      expect(subject).to create_template('/etc/hbase/conf/test.properties').with(
         source: 'log4j2.properties.erb',
         cookbook: 'hbase',
         owner: 'hbase',
@@ -104,7 +104,7 @@ describe 'hbase_config' do
     end
 
     it 'creates the script file with correct template' do
-      is_expected.to create_template('/etc/hbase/conf/test-script.sh').with(
+      expect(subject).to create_template('/etc/hbase/conf/test-script.sh').with(
         source: 'generic-script.erb',
         cookbook: 'hbase',
         owner: 'hbase',
@@ -130,7 +130,7 @@ describe 'hbase_config' do
     end
 
     it 'creates the config file with custom template' do
-      is_expected.to create_template('/etc/hbase/conf/custom.xml').with(
+      expect(subject).to create_template('/etc/hbase/conf/custom.xml').with(
         source: 'custom-template.erb',
         cookbook: 'hbase',
         owner: 'hbase',
@@ -155,7 +155,7 @@ describe 'hbase_config' do
     end
 
     it 'creates the config file with restart notifications' do
-      is_expected.to create_template('/etc/hbase/conf/restart-test.xml').with(
+      expect(subject).to create_template('/etc/hbase/conf/restart-test.xml').with(
         notifies: [:restart, 'service[hbase-master]', :delayed],
         notifies: [:restart, 'service[hbase-regionserver]', :delayed]
       )
@@ -178,7 +178,7 @@ describe 'hbase_config' do
     end
 
     it 'creates the config file using helpers' do
-      is_expected.to create_template('/etc/hbase/conf/helper-test.xml').with(
+      expect(subject).to create_template('/etc/hbase/conf/helper-test.xml').with(
         source: 'hbase-site.xml.erb',
         cookbook: 'hbase',
         owner: 'hbase',
