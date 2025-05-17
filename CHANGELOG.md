@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2024-05-17
+
+### Breaking Changes
+- Updated to require Chef Infra Client 18.0 or higher
+- Removed support for EOL platforms and components
+- Migrated to unified_mode for all resources
+
+### Added
+- Support for all current non-EOL platforms including:
+  - Ubuntu 18.04, 20.04, 22.04
+  - Debian 10, 11
+  - RHEL/Almalinux/Rocky 8, 9
+  - Amazon Linux 2, 2023
+  - SUSE Linux Enterprise Server 12, 15
+  - openSUSE Leap 15
+  - macOS 12+
+  - FreeBSD 13+
+  - Windows 10, Server 2016+
+- Added Policyfile support with named run lists
+- Enhanced InSpec tests with security compliance controls
+- Added matrix testing for multiple platforms and Chef versions
+- Added semantic versioning and GitHub Packages integration
+
+### Changed
+- Modernized GitHub Actions workflows
+- Updated Test Kitchen configuration for all supported platforms
+- Improved documentation with modern examples
+- Enhanced CI/CD pipeline with parallel testing
+
+### Removed
+- Legacy platform support for EOL systems
+- Outdated configuration patterns
+
 ## [1.2.0] - 2023-07-11
 
 ### Added
