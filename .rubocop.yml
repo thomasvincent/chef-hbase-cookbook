@@ -1,4 +1,6 @@
 ---
+inherit_from: .rubocop_todo.yml
+
 # This is the RuboCop configuration used for Chef cookbooks
 # It extends the default Cookstyle configuration with additional rules
 
@@ -39,7 +41,11 @@ RSpec:
         Transformers:
           - LET_TRANSFORM
 
-RSpec/FilePath:
+# Replace deprecated RSpec/FilePath with new split cops
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+RSpec/SpecFilePathSuffix:
   Enabled: false
 
 # Performance optimizations
@@ -112,7 +118,7 @@ Metrics/ClassLength:
 # Chef-specific method names are allowed
 Naming/PredicateName:
   Enabled: true
-  NamePrefixBlacklist:
+  ForbiddenPrefixes:
     - is_
     - has_
   AllowedMethods:
