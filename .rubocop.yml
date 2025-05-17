@@ -4,8 +4,7 @@ inherit_from: .rubocop_todo.yml
 # This is the RuboCop configuration used for Chef cookbooks
 # It extends the default Cookstyle configuration with additional rules
 
-require:
-  - rubocop-chef
+plugins:
   - rubocop-performance
   - rubocop-rspec
 
@@ -21,16 +20,16 @@ AllCops:
   NewCops: enable
 
 # Chef-specific rules
-ChefDeprecations:
+Chef/Deprecations:
   Enabled: true
 
-ChefModernize:
+Chef/Modernize:
   Enabled: true
 
-ChefRedundantCode:
+Chef/RedundantCode:
   Enabled: true
 
-ChefStyle:
+Chef/Style:
   Enabled: true
 
 # RSpec configuration for ChefSpec
@@ -126,70 +125,16 @@ Naming/PredicateName:
     - is_windows?
     - is_linux?
 
-# Custom Chef cops
-Chef/Correctness/MetadataMissingName:
-  Enabled: true
-
-Chef/Correctness/ResourceSetsNameProperty:
-  Enabled: true
-
-Chef/Deprecations/ChefSpecCoverageReport:
-  Enabled: true
-
-Chef/Modernize/DependsOnChefDk:
-  Enabled: true
-  
-Chef/Modernize/DependsOnSoloSearch:
-  Enabled: true
-  
-Chef/Modernize/PowershellInstallWindowsFeature:
-  Enabled: true
-  
-Chef/Modernize/ResourceNameFromInitialize:
-  Enabled: true
-  
-Chef/Modernize/UnnecessaryDependsChef:
-  Enabled: true
-  
-Chef/Modernize/UsesZsphereUrl:
-  Enabled: true
-
-Chef/Modernize/WindowsScriptPriv:
-  Enabled: true
-  
-Chef/Sharing/CustomResourceFromFiles:
-  Enabled: true
-  
-Chef/Sharing/EmptyCopyrightComments:
-  Enabled: true
-  
-Chef/Sharing/IncludePropertyDescriptions:
-  Enabled: true
-  
-Chef/Sharing/IncludeResourceDescriptions:
-  Enabled: true
-  
-Chef/Sharing/InsecureCookbookURL:
-  Enabled: true
-
+# Only include cops available in current Cookstyle
 Chef/Style/AttributeKeys:
   AutoCorrect: true
   EnforcedStyle: symbols
 
-Chef/Style/ChefWhaaat:
-  Enabled: true
-  
 Chef/Style/CommentFormat:
   Enabled: true
   
 Chef/Style/CommentSentenceSpacing:
   Enabled: true
   
-Chef/Style/DefaultCopyrightComments:
-  Enabled: true
-  
 Chef/Style/FileMode:
-  EnforcedStyle: numeric
-  
-Chef/Style/ImmediateNotificationTiming:
   Enabled: true
