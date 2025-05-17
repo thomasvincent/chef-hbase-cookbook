@@ -1,0 +1,94 @@
+---
+name: Semantic Versioning
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Type of version bump'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Get current version
+        id: get_version
+        run: |
+          CURRENT_VERSION=$(grep "^version" metadata.rb | awk -F "'" '{print $2}')
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+          echo "Current version: $CURRENT_VERSION"
+      
+      - name: Bump version
+        id: bump_version
+        run: |
+          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+          
+          if [ "${{ github.event.inputs.version_type }}" == "major" ]; then
+            major=$((major + 1))
+            minor=0
+            patch=0
+          elif [ "${{ github.event.inputs.version_type }}" == "minor" ]; then
+            minor=$((minor + 1))
+            patch=0
+          else
+            patch=$((patch + 1))
+          fi
+          
+          NEW_VERSION="$major.$minor.$patch"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "New version: $NEW_VERSION"
+          
+          # Update version in metadata.rb
+          sed -i "s/^version '.*'/version '$NEW_VERSION'/" metadata.rb
+      
+      - name: Commit version bump
+        run: |
+          git add metadata.rb
+          git commit -m "chore(version): bump to ${{ env.NEW_VERSION }}"
+          git push
+      
+      - name: Create tag
+        run: |
+          git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
+          git push origin "v${{ env.NEW_VERSION }}"
+          
+      - name: Create Pull Request for version bump
+        id: create_pr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(version): bump to ${{ env.NEW_VERSION }}"
+          branch: version-bump-${{ env.NEW_VERSION }}
+          base: master
+          title: "chore(version): bump to ${{ env.NEW_VERSION }}"
+          body: |
+            This PR bumps the version to ${{ env.NEW_VERSION }}
+            
+            - ${{ github.event.inputs.version_type }} version bump
+            - Created automatically by GitHub Actions

@@ -1,0 +1,88 @@
+---
+name: Release
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v4.1.0
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ env.VERSION }}
+          body: |
+            # HBase Cookbook v${{ env.VERSION }}
+
+            ## What's Changed
+            ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+          
+      - name: Package cookbook
+        run: |
+          mkdir -p dist
+          tar -czf dist/hbase-${{ env.VERSION }}.tar.gz \
+            --exclude .git \
+            --exclude .github \
+            --exclude dist \
+            --exclude ".*" \
+            --transform "s,^,hbase/," \
+            .
+
+      - name: Upload cookbook archive to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/hbase-${{ env.VERSION }}.tar.gz
+          asset_name: hbase-${{ env.VERSION }}.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload to Chef Supermarket
+        if: ${{ false }}  # Disabled until supermarket credentials are set up
+        env:
+          SUPERMARKET_USERNAME: ${{ secrets.SUPERMARKET_USERNAME }}
+          SUPERMARKET_KEY: ${{ secrets.SUPERMARKET_KEY }}
+        run: |
+          echo "Supermarket upload disabled. To enable, set the if condition to true and add secrets."
+          # knife supermarket share hbase -o ../ --config .chef/knife.rb
+
+      - name: Upload package to GitHub Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbase-cookbook-v${{ env.VERSION }}
+          path: dist/hbase-${{ env.VERSION }}.tar.gz
+          if-no-files-found: error
