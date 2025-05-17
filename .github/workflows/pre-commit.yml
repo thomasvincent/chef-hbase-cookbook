@@ -1,0 +1,39 @@
+---
+name: Pre-commit Checks
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install pre-commit
+        uses: pre-commit/action@v3.0.1
+        
+      - name: Run Cookstyle linter
+        run: bundle exec cookstyle --display-cop-names
+      
+      - name: Validate markdown files
+        run: |
+          npm install -g markdownlint-cli
+          markdownlint "*.md" "documentation/*.md" || true

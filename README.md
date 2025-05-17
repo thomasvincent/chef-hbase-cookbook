@@ -1,23 +1,31 @@
 # HBase Cookbook
 
 [![CI](https://github.com/thomasvincent/chef-hbase-cookbook/actions/workflows/ci.yml/badge.svg)](https://github.com/thomasvincent/chef-hbase-cookbook/actions/workflows/ci.yml)
+[![pre-commit](https://github.com/thomasvincent/chef-hbase-cookbook/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/thomasvincent/chef-hbase-cookbook/actions/workflows/pre-commit.yml)
 
 This cookbook installs and configures Apache HBase - the Hadoop database, a distributed, scalable, big data store.
 
 ## Requirements
 
 ### Platforms
+
+This cookbook is tested on the following platforms using Test Kitchen with the [kitchen-dokken](https://github.com/test-kitchen/kitchen-dokken) driver:
+
 - Ubuntu 20.04, 22.04
-- Debian 11+
+- Debian 11
 - AlmaLinux/RHEL 8, 9
-- Amazon Linux 2
+- Amazon Linux 2, 2023
 - Fedora 36+
 
+Other Linux distributions may work but are not officially supported or tested.
+
 ### Chef
-- Chef 18.0+
+
+- Chef 18.0 or later
 
 ### Cookbooks
-- `ark` - Used for installing HBase from binary releases
+
+- `ark` (version ~> 5.0) - Used for installing HBase from binary releases
 
 ## Features
 
@@ -31,8 +39,41 @@ This cookbook installs and configures Apache HBase - the Hadoop database, a dist
 - Modern custom resources for service and configuration management
 - Integration with Hadoop HDFS (for rootdir)
 - Docker-based testing infrastructure
+- Test-driven development with ChefSpec and InSpec
 
 ## Usage
+
+### Using with Policyfiles (Recommended)
+
+Policyfiles provide a way to manage cookbook dependencies and configuration in a single file:
+
+```ruby
+# Policyfile.rb
+name 'hbase_policy'
+default_source :supermarket
+run_list 'hbase::default'
+
+# Lock version
+cookbook 'hbase', '= 1.1.0', :git => 'https://github.com/thomasvincent/chef-hbase-cookbook.git'
+
+# Override attributes
+default['hbase']['config']['hbase.cluster.distributed'] = true
+default['hbase']['config']['hbase.rootdir'] = 'hdfs://namenode:8020/hbase'
+default['hbase']['config']['hbase.zookeeper.quorum'] = 'zk1,zk2,zk3'
+default['hbase']['topology']['role'] = 'master'
+```
+
+Install the policy and related cookbooks:
+
+```bash
+chef install Policyfile.rb
+```
+
+Push the policy to the Chef server (if using Chef Infra Server):
+
+```bash
+chef push production Policyfile.rb
+```
 
 ### Basic standalone HBase
 
@@ -242,18 +283,57 @@ bundle exec rake integration:suite[distributed]
 
 ## CI/CD
 
-This cookbook uses GitHub Actions for CI/CD, with workflows defined in `.github/workflows/ci.yml`:
+This cookbook uses GitHub Actions for CI/CD, with workflows defined in `.github/workflows/`:
 
-1. **Linting**: Runs Cookstyle to check code style
-2. **Unit Testing**: Runs ChefSpec tests 
-3. **Integration Testing**: Runs Test Kitchen tests on multiple platforms using Docker:
-   - Ubuntu 20.04 and 22.04
-   - AlmaLinux 8
-   - Amazon Linux 2
+1. **ci.yml**: 
+   - Linting: Runs Cookstyle to check code style
+   - Unit Testing: Runs ChefSpec tests 
+   - Integration Testing: Runs Test Kitchen tests on multiple platforms using Docker
+
+2. **pre-commit.yml**:
+   - Runs pre-commit hooks to enforce code quality
+   - Checks for merge conflicts, trailing whitespace, YAML validity
+   - Runs shellcheck on shell scripts
+   - Runs cookstyle on Ruby files
+
+The integration tests cover the following platforms:
+- Ubuntu 20.04 and 22.04
+- Debian 11
+- AlmaLinux 8, 9
+- Amazon Linux 2, 2023
+- Fedora 36+
 
 ## Attributes
 
 See `attributes/default.rb` for a comprehensive list of configurable attributes.
+
+Key attributes include:
+
+```ruby
+# Version and installation
+default['hbase']['version'] = '2.5.11'
+default['hbase']['install_dir'] = '/opt/hbase'
+default['hbase']['conf_dir'] = '/etc/hbase/conf'
+
+# Java options
+default['hbase']['java']['version'] = '11'
+default['hbase']['java_opts'] = '-Xmx1024m -XX:+UseG1GC'
+
+# Topology settings
+default['hbase']['topology']['role'] = nil # 'master', 'regionserver', etc.
+
+# Core configuration
+default['hbase']['config']['hbase.rootdir'] = 'file:///var/hbase'
+default['hbase']['config']['hbase.cluster.distributed'] = false
+```
+
+## Version Compatibility Matrix
+
+| HBase Version | Hadoop Version | Java Compatibility     | Chef Version |
+|---------------|----------------|------------------------|--------------|
+| 2.5.x         | 3.x            | 8 (official), 11, 17   | >= 18.0      |
+| 2.4.x         | 2.x, 3.x       | 8 (official), 11       | >= 18.0      |
+| 2.3.x         | 2.x            | 8 only                 | >= 18.0      |
 
 ## Development
 
@@ -263,6 +343,25 @@ See `attributes/default.rb` for a comprehensive list of configurable attributes.
 4. Make your changes
 5. Run the tests to ensure they pass
 6. Submit a Pull Request
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/thomasvincent/chef-hbase-cookbook.git
+cd chef-hbase-cookbook
+
+# Install dependencies
+bundle install
+
+# Install pre-commit hooks
+pre-commit install
+
+# Run tests
+bundle exec rake style
+bundle exec rake spec
+KITCHEN_YAML=kitchen.docker.yml bundle exec kitchen test
+```
 
 ## License
 

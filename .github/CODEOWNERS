@@ -1,0 +1,10 @@
+# Global owners for the repository
+*       @thomasvincent
+
+# Chef cookbook files
+*.rb    @thomasvincent
+*.erb   @thomasvincent
+
+# CI and automation
+.github/* @thomasvincent
+EOF < /dev/null

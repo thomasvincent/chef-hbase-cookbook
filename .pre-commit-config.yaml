@@ -7,6 +7,10 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
+      - id: detect-private-key
+      - id: check-merge-conflict
+      - id: no-commit-to-branch
+        args: [--branch, master, --branch, main]
 
   - repo: https://github.com/reviewdog/action-shellcheck
     rev: v1.17.0
@@ -18,10 +22,28 @@ repos:
       - id: cookstyle
         name: cookstyle
         description: Cookstyle linting for Chef
-        entry: cookstyle
+        entry: bundle exec cookstyle
         language: ruby
         files: \.(rb)$
         types: [file, ruby]
         pass_filenames: true
         require_serial: true
-EOF < /dev/null
+        
+      - id: check-github-workflows
+        name: check-github-workflows
+        description: Check GitHub Actions workflows
+        entry: ruby -e 'require "yaml"; ARGV.each do |file| begin; YAML.load_file(file); rescue => e; puts "Error in #{file}: #{e}"; exit(1); end; end'
+        language: ruby
+        files: \.github/workflows/.*\.ya?ml$
+        types: [file, yaml]
+        pass_filenames: true
+        
+      - id: rake-test
+        name: chef-spec
+        description: Run unit tests
+        entry: bundle exec rake spec
+        language: ruby
+        types: [ruby]
+        pass_filenames: false
+        require_serial: true
+        stages: [push]

@@ -1,60 +1,119 @@
 ---
 driver:
-  name: docker
-  use_sudo: false
+  name: dokken
   privileged: true
-  provision_command:
-    - systemctl enable systemd-logind.service
-    - systemctl enable systemd-journald.service
+  chef_version: <%= ENV['CHEF_VERSION'] || '18.2' %>
+  chef_license: accept-silent
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
+
+transport:
+  name: dokken
 
 provisioner:
-  name: chef_zero
+  name: dokken
   product_name: chef
-  product_version: 18.2
+  product_version: <%= ENV['CHEF_VERSION'] || '18.2' %>
   chef_license: accept-silent
   enforce_idempotency: true
   multiple_converge: 2
   deprecations_as_errors: true
   data_bags_path: "test/integration/data_bags"
+  environments_path: "test/integration/environments"
 
 verifier:
   name: inspec
+  reporter:
+    - cli
+    - junit:test-reports/%{platform}_%{suite}_inspec.xml
 
 platforms:
+  # Ubuntu
+  - name: ubuntu-18.04
+    driver:
+      image: dokken/ubuntu-18.04
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+        - RUN /usr/bin/apt-get install -y apt-utils
+        
   - name: ubuntu-20.04
-    driver_config:
+    driver:
       image: dokken/ubuntu-20.04
       pid_one_command: /bin/systemd
-
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+        
   - name: ubuntu-22.04
-    driver_config:
+    driver:
       image: dokken/ubuntu-22.04
       pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
 
+  # Debian
+  - name: debian-10
+    driver:
+      image: dokken/debian-10
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+  
   - name: debian-11
-    driver_config:
+    driver:
       image: dokken/debian-11
       pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+
+  # RHEL-based
+  - name: centos-7
+    driver:
+      image: dokken/centos-7
+      pid_one_command: /usr/lib/systemd/systemd
 
   - name: almalinux-8
-    driver_config:
+    driver:
       image: dokken/almalinux-8
-      pid_one_command: /bin/systemd
+      pid_one_command: /usr/lib/systemd/systemd
 
   - name: almalinux-9
-    driver_config:
+    driver:
       image: dokken/almalinux-9
-      pid_one_command: /bin/systemd
+      pid_one_command: /usr/lib/systemd/systemd
 
+  - name: rockylinux-8
+    driver:
+      image: dokken/rockylinux-8
+      pid_one_command: /usr/lib/systemd/systemd
+
+  - name: rockylinux-9
+    driver:
+      image: dokken/rockylinux-9
+      pid_one_command: /usr/lib/systemd/systemd
+
+  # Amazon Linux
   - name: amazonlinux-2
-    driver_config:
+    driver:
       image: dokken/amazonlinux-2
-      pid_one_command: /bin/systemd
+      pid_one_command: /usr/lib/systemd/systemd
 
-  - name: fedora-36
-    driver_config:
-      image: dokken/fedora-36
-      pid_one_command: /bin/systemd
+  - name: amazonlinux-2023
+    driver:
+      image: dokken/amazonlinux-2023
+      pid_one_command: /usr/lib/systemd/systemd
+
+  # SUSE
+  - name: opensuse-leap-15
+    driver:
+      image: dokken/opensuse-leap-15
+      pid_one_command: /usr/lib/systemd/systemd
+
+  # Fedora
+  - name: fedora-latest
+    driver:
+      image: dokken/fedora-latest
+      pid_one_command: /usr/lib/systemd/systemd
 
 suites:
   - name: default

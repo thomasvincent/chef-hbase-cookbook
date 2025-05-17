@@ -1,24 +1,22 @@
+---
 version: 2
 updates:
-  # Ruby gems
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "ruby"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-patch"]
-
-  # GitHub Actions
+    versioning-strategy: lockfile-only
+    
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "github_actions"
+EOF < /dev/null
