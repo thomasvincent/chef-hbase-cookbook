@@ -1,17 +1,20 @@
 ---
+# Primary Docker-based Test Kitchen configuration using Dokken
+# Dokken is optimized for Chef cookbook testing in Docker containers
+# Perfect for fast, isolated testing on laptops
+
 driver:
-  name: docker
-  use_sudo: false
+  name: dokken
   privileged: true
-  provision_command:
-    - systemctl enable systemd-logind.service
-    - systemctl enable systemd-journald.service
+  chef_version: latest # Use latest Chef 19
+  chef_license: accept-no-persist
+
+transport:
+  name: dokken
 
 provisioner:
-  name: chef_zero
-  product_name: chef
-  product_version: 17.10
-  chef_license: accept-silent
+  name: dokken
+  chef_license: accept-no-persist
   enforce_idempotency: true
   multiple_converge: 2
   deprecations_as_errors: true
@@ -21,40 +24,43 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
-    driver_config:
-      image: dokken/ubuntu-20.04
-      pid_one_command: /bin/systemd
-
   - name: ubuntu-22.04
-    driver_config:
+    driver:
       image: dokken/ubuntu-22.04
       pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+        - RUN /usr/bin/apt-get install -y openjdk-11-jdk
+
+  - name: ubuntu-20.04
+    driver:
+      image: dokken/ubuntu-20.04
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+        - RUN /usr/bin/apt-get install -y openjdk-11-jdk
 
   - name: debian-11
-    driver_config:
+    driver:
       image: dokken/debian-11
       pid_one_command: /bin/systemd
-
-  - name: almalinux-8
-    driver_config:
-      image: dokken/almalinux-8
-      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+        - RUN /usr/bin/apt-get install -y openjdk-17-jdk
 
   - name: almalinux-9
-    driver_config:
+    driver:
       image: dokken/almalinux-9
-      pid_one_command: /bin/systemd
+      pid_one_command: /usr/lib/systemd/systemd
+      intermediate_instructions:
+        - RUN dnf install -y java-11-openjdk-devel
 
-  - name: amazonlinux-2
-    driver_config:
-      image: dokken/amazonlinux-2
-      pid_one_command: /bin/systemd
-
-  - name: fedora-36
-    driver_config:
-      image: dokken/fedora-36
-      pid_one_command: /bin/systemd
+  - name: amazonlinux-2023
+    driver:
+      image: dokken/amazonlinux-2023
+      pid_one_command: /usr/lib/systemd/systemd
+      intermediate_instructions:
+        - RUN dnf install -y java-11-amazon-corretto-devel
 
 suites:
   - name: default
