@@ -187,34 +187,18 @@ This cookbook uses Test Kitchen with Docker for integration testing.
 
 ### Testing with Dokken
 
-The fastest way to test is using the dokken driver, which is specifically designed for Test Kitchen with Docker:
+Run Test Kitchen using the bundled configuration:
 
 ```bash
 # Run all tests using dokken
-KITCHEN_YAML=kitchen.docker.yml bundle exec kitchen test
+bundle exec kitchen test
 
 # Test a specific platform
-KITCHEN_YAML=kitchen.docker.yml bundle exec kitchen test ubuntu-20-04
+bundle exec kitchen test ubuntu-20-04
 
 # Test a specific instance
-KITCHEN_YAML=kitchen.docker.yml bundle exec kitchen test ubuntu-20-04-default
+bundle exec kitchen test ubuntu-20-04-default
 ```
-
-### Using the Test Script
-
-For easier testing, especially when you don't have Ruby installed locally, use the provided test script:
-
-```bash
-# Run the test script (requires Docker)
-./test-docker.sh
-```
-
-The test script will:
-1. Spin up a Docker container with all required dependencies
-2. Run the tests on the specified platforms (default: Ubuntu 20.04)
-3. Clean up after testing
-
-You can modify the script to test additional platforms and suites.
 
 ### Using Rake Tasks for Testing
 
@@ -230,14 +214,17 @@ bundle exec rake style
 # Run only unit tests
 bundle exec rake spec
 
-# Run integration tests with Docker
-bundle exec rake integration:docker
+# Run integration tests
+bundle exec rake integration:kitchen
 
 # Test a specific platform
-bundle exec rake integration:docker_platform[ubuntu-20-04]
+bundle exec rake integration:platform[ubuntu-20-04]
 
 # Test a specific suite
 bundle exec rake integration:suite[distributed]
+
+# Test a specific instance
+bundle exec rake integration:instance[ubuntu-20-04-default]
 ```
 
 ## CI/CD

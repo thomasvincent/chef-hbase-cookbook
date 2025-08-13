@@ -1,11 +1,9 @@
 source 'https://rubygems.org'
 
 # Core Chef development tools
-# Chef 19 has not been released yet which causes bundle install failures.
-# Use the latest available major version instead.
+# Use the latest available Chef 18 release
 gem 'chef', '~> 18.0'
 gem 'chef-cli', '~> 5.6'
-gem 'berkshelf', '>= 8.0'
 
 # Testing frameworks
 gem 'chefspec', '~> 9.3'
