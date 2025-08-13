@@ -1,13 +1,16 @@
 source 'https://rubygems.org'
 
 # Core Chef development tools
-gem 'chef', '~> 19.0'
+# Chef 19 has not been released yet which caused bundle install failures.
+# Use the latest available major version instead.
+gem 'chef', '~> 18.0'
 gem 'chef-cli', '~> 5.6'
 gem 'berkshelf', '>= 8.0'
 
 # Testing frameworks
 gem 'chefspec', '~> 9.3'
-gem 'inspec', '~> 7.0'
+# kitchen-inspec is limited to inspec < 7, so stick to the 6.x series for now.
+gem 'inspec', '~> 6.0'
 gem 'test-kitchen', '~> 3.7'
 
 # Test Kitchen drivers
@@ -23,7 +26,8 @@ group :development do
 end
 
 group :test do
-  gem 'rspec', '~> 3.12'
+  # ChefSpec 9 requires RSpec < 3.12
+  gem 'rspec', '>= 3.11', '< 3.12'
   gem 'rspec-its', '~> 1.3'
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-console', '~> 0.9'

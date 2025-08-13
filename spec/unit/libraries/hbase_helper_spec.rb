@@ -1,4 +1,5 @@
 require 'spec_helper'
+require_relative '../../../libraries/hbase_helper'
 
 describe HBase::Helper do
   let(:dummy_class) do
