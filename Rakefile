@@ -22,24 +22,24 @@ end
 
 # Integration tests with Kitchen
 namespace :integration do
-  desc 'Run Test Kitchen with Docker'
-  task :docker do
-    sh 'KITCHEN_YAML=kitchen.docker.yml kitchen test'
+  desc 'Run Test Kitchen'
+  task :kitchen do
+    sh 'kitchen test'
   end
 
-  desc 'Run Test Kitchen with Docker for a specific platform'
-  task :docker_platform, [:platform] do |_t, args|
-    sh "KITCHEN_YAML=kitchen.docker.yml kitchen test #{args[:platform]}"
+  desc 'Run Test Kitchen for a specific platform'
+  task :platform, [:platform] do |_t, args|
+    sh "kitchen test #{args[:platform]}"
   end
 
   desc 'Run Test Kitchen for a specific suite'
   task :suite, [:suite] do |_t, args|
-    sh "KITCHEN_YAML=kitchen.docker.yml kitchen test #{args[:suite]}"
+    sh "kitchen test #{args[:suite]}"
   end
 
   desc 'Run a specific Test Kitchen instance'
   task :instance, [:instance] do |_t, args|
-    sh "KITCHEN_YAML=kitchen.docker.yml kitchen test #{args[:instance]}"
+    sh "kitchen test #{args[:instance]}"
   end
 end
 
@@ -52,24 +52,12 @@ namespace :docs do
   end
 end
 
-desc 'Run test-kitchen with Vagrant'
-task :vagrant do
-  ENV['KITCHEN_YAML'] = 'kitchen.yml'
-  sh 'kitchen test'
-end
-
-desc 'Run test-kitchen with Docker'
-task :docker do
-  ENV['KITCHEN_YAML'] = 'kitchen.docker.yml'
-  sh 'kitchen test'
-end
-
 # Default tasks
 desc 'Run all tests except Kitchen'
 task default: ['style', 'spec']
 
 desc 'Run all tests'
-task test: ['style', 'spec', 'integration:docker']
+task test: ['style', 'spec', 'integration:kitchen']
 
 desc 'Generate documentation'
 task doc: ['docs:yard']
