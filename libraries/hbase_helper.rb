@@ -81,5 +81,4 @@ Chef::DSL::Recipe.include(HBase::Helper)
 if defined?(Chef::DSL::Resource)
   Chef::DSL::Resource.include(HBase::Helper)
 else
-  Chef::Resource.include(HBase::Helper)
 end
