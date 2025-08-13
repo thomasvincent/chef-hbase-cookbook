@@ -6,15 +6,15 @@ AllCops:
     - '.kitchen/**/*'
     - 'bin/**/*'
 
-ChefStyle/CommentFormat:
+Chef/Style/CommentFormat:
   Enabled: true
-ChefModernize/FoodcriticComments:
+Chef/Modernize/FoodcriticComments:
   Enabled: true
-ChefStyle/FileMode:
+Chef/Style/FileMode:
   Enabled: true
 Layout/TrailingEmptyLines:
   Enabled: true
 Layout/TrailingWhitespace:
   Enabled: true
-ChefCorrectness/SyntaxErrorsInMetadata:
+Chef/Correctness/InvalidVersionMetadata:
   Enabled: true
