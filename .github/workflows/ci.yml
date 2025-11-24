@@ -7,9 +7,21 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Cancel previous runs on the same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+
+
+# Minimal permissions by default
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15  # Prevent hung jobs
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
