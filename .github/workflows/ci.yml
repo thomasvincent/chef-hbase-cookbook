@@ -12,16 +12,17 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-
-
 # Minimal permissions by default
 permissions:
   contents: read
 
+env:
+  CHEF_LICENSE: accept-no-persist
+
 jobs:
   lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # Prevent hung jobs
+    timeout-minutes: 15
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
@@ -29,17 +30,13 @@ jobs:
       with:
         ruby-version: '3.2'
         bundler-cache: true
-    - name: Install dependencies
-      run: |
-        gem install bundler
-        bundle config set --local without development
-        bundle install --jobs 4 --retry 3
     - name: Run Cookstyle
       run: bundle exec cookstyle .
 
   unit-test:
     needs: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
@@ -47,17 +44,13 @@ jobs:
       with:
         ruby-version: '3.2'
         bundler-cache: true
-    - name: Install dependencies
-      run: |
-        gem install bundler
-        bundle config set --local without development
-        bundle install --jobs 4 --retry 3
     - name: Run ChefSpec
       run: bundle exec rspec spec/
-      
+
   integration-test:
     needs: unit-test
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -69,24 +62,28 @@ jobs:
           - os: 'ubuntu-20-04'
             suite: 'rest'
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
     - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
-    - name: Install Chef CLI
+      uses: docker/setup-buildx-action@v3
+    - name: Free disk space
       run: |
-        sudo apt-get update
-        sudo apt-get install -y apt-transport-https ca-certificates
-        wget -qO- https://packages.chef.io/chef.asc | sudo apt-key add -
-        sudo apt-add-repository "deb https://packages.chef.io/repos/apt/stable focal main"
-        sudo apt-get update
-        sudo apt-get install -y chef-workstation
+        sudo apt-get clean
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /usr/local/share/boost
     - name: Run Test Kitchen
       run: |
-        echo 'driver:' > .kitchen.local.yml
-        echo '  name: dokken' >> .kitchen.local.yml
-        sudo -E KITCHEN_YAML=kitchen.docker.yml kitchen test ${{ matrix.os }}-${{ matrix.suite }}
-    - name: Debug failures
+        bundle exec kitchen test ${{ matrix.suite }}-${{ matrix.os }}
+      env:
+        KITCHEN_YAML: kitchen.docker.yml
+    - name: Upload kitchen logs on failure
       if: failure()
-      run: |
-        sudo -E KITCHEN_YAML=kitchen.docker.yml kitchen diagnose
-        sudo -E KITCHEN_YAML=kitchen.docker.yml kitchen logs ${{ matrix.os }}-${{ matrix.suite }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: kitchen-logs-${{ matrix.suite }}-${{ matrix.os }}
+        path: .kitchen/logs/
