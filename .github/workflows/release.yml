@@ -13,7 +13,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -38,7 +38,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref }}
           name: Release ${{ env.VERSION }}
@@ -81,7 +81,7 @@ jobs:
           # knife supermarket share hbase -o ../ --config .chef/knife.rb
 
       - name: Upload package to GitHub Packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: hbase-cookbook-v${{ env.VERSION }}
           path: dist/hbase-${{ env.VERSION }}.tar.gz
