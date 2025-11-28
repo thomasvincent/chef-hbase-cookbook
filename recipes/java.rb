@@ -9,17 +9,17 @@
 # Determine Java home directory if not explicitly set
 if node['hbase']['java_home'].nil?
   jdk_version = node['hbase']['java']['version']
-  
+
   case node['platform_family']
   when 'debian'
     node.default['hbase']['java_home'] = "/usr/lib/jvm/java-#{jdk_version}-openjdk-amd64"
   when 'rhel', 'fedora', 'amazon'
     # RHEL/CentOS/Fedora/Amazon Linux
-    if jdk_version.to_i >= 11
-      node.default['hbase']['java_home'] = "/usr/lib/jvm/java-#{jdk_version}-openjdk"
-    else
-      node.default['hbase']['java_home'] = "/usr/lib/jvm/java-#{jdk_version}-openjdk-#{node['kernel']['machine']}"
-    end
+    node.default['hbase']['java_home'] = if jdk_version.to_i >= 11
+                                           "/usr/lib/jvm/java-#{jdk_version}-openjdk"
+                                         else
+                                           "/usr/lib/jvm/java-#{jdk_version}-openjdk-#{node['kernel']['machine']}"
+                                         end
   else
     Chef::Log.warn("Unsupported platform family: #{node['platform_family']}. Setting default Java home.")
     node.default['hbase']['java_home'] = "/usr/lib/jvm/java-#{jdk_version}-openjdk"
@@ -63,7 +63,7 @@ ruby_block 'verify_java_installation' do
     cmd = Mixlib::ShellOut.new('java -version')
     cmd.run_command
     if cmd.error?
-      Chef::Application.fatal!("Java installation failed: #{cmd.stderr}")
+      raise("Java installation failed: #{cmd.stderr}")
     else
       Chef::Log.info("Java installation verified: #{cmd.stderr}")
     end

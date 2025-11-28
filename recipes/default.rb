@@ -28,7 +28,7 @@ when 'backup_master'
 else
   # Standalone mode or custom configuration
   Chef::Log.info('Setting up HBase in standalone mode or custom configuration')
-  
+
   # Always create and start master service in standalone mode
   hbase_service 'master' do
     restart_on_config_change true

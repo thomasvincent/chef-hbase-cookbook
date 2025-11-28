@@ -11,9 +11,9 @@ describe 'hbase_config' do
         user 'hbase'
         group 'hbase'
         variables({
-          'test.prop1' => 'value1',
-          'test.prop2' => 'value2'
-        })
+                    'test.prop1' => 'value1',
+                    'test.prop2' => 'value2',
+                  })
         config_type 'xml'
         action :create
       end
@@ -45,9 +45,9 @@ describe 'hbase_config' do
         user 'hbase'
         group 'hbase'
         variables({
-          'java_home' => '/usr/lib/jvm/java-11',
-          'hbase_opts' => '-Xmx2048m'
-        })
+                    'java_home' => '/usr/lib/jvm/java-11',
+                    'hbase_opts' => '-Xmx2048m',
+                  })
         config_type 'env'
         action :create
       end
@@ -70,9 +70,9 @@ describe 'hbase_config' do
         user 'hbase'
         group 'hbase'
         variables({
-          'log_dir' => '/var/log/hbase',
-          'log_level' => 'DEBUG'
-        })
+                    'log_dir' => '/var/log/hbase',
+                    'log_level' => 'DEBUG',
+                  })
         config_type 'properties'
         action :create
       end
@@ -95,8 +95,8 @@ describe 'hbase_config' do
         user 'hbase'
         group 'hbase'
         variables({
-          'content' => '#!/bin/bash\necho "Hello"'
-        })
+                    'content' => '#!/bin/bash\necho "Hello"',
+                  })
         config_type 'script'
         mode '0755'
         action :create
@@ -121,9 +121,9 @@ describe 'hbase_config' do
         group 'hbase'
         template_source 'custom-template.erb'
         variables({
-          'test.prop1' => 'value1',
-          'test.prop2' => 'value2'
-        })
+                    'test.prop1' => 'value1',
+                    'test.prop2' => 'value2',
+                  })
         config_type 'xml'
         action :create
       end
@@ -146,10 +146,10 @@ describe 'hbase_config' do
         user 'hbase'
         group 'hbase'
         variables({
-          'test.prop1' => 'value1'
-        })
+                    'test.prop1' => 'value1',
+                  })
         config_type 'xml'
-        restart_services ['master', 'regionserver']
+        restart_services %w(master regionserver)
         action :create
       end
     end
@@ -168,9 +168,9 @@ describe 'hbase_config' do
         user 'hbase'
         group 'hbase'
         variables({
-          'test.prop1' => 'value1',
-          'test.prop2' => 'value2'
-        })
+                    'test.prop1' => 'value1',
+                    'test.prop2' => 'value2',
+                  })
         config_type 'xml'
         use_helpers true
         action :create

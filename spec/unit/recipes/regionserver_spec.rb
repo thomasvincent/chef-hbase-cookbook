@@ -32,7 +32,7 @@ describe 'hbase::regionserver' do
       runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
       runner.node.normal['hbase']['service_mapping']['regionserver']['config'] = {
         'hbase.regionserver.port' => 16021,
-        'hbase.regionserver.info.port' => 16031
+        'hbase.regionserver.info.port' => 16031,
       }
       runner.converge(described_recipe)
     end
@@ -41,7 +41,7 @@ describe 'hbase::regionserver' do
       expect(chef_run).to create_hbase_service('regionserver').with(
         service_config: {
           'hbase.regionserver.port' => 16021,
-          'hbase.regionserver.info.port' => 16031
+          'hbase.regionserver.info.port' => 16031,
         }
       )
     end

@@ -21,7 +21,7 @@ control 'hbase-rest-1.0' do
     its('content') { should include 'ExecStart=' }
     its('content') { should include 'rest' }
   end
-  
+
   # Check if REST process is running
   describe processes('java') do
     its('commands') { should include /org.apache.hadoop.hbase.rest.RESTServer/ }
