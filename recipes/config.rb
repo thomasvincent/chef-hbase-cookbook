@@ -30,7 +30,7 @@ env_vars = {
 # Add Kerberos settings if authentication is kerberos
 if node['hbase']['security']['authentication'] == 'kerberos'
   env_vars['hbase_opts'] = "#{env_vars['hbase_opts']} -Djava.security.auth.login.config=#{node['hbase']['conf_dir']}/jaas.conf"
-  
+
   # Create jaas.conf
   template "#{node['hbase']['conf_dir']}/jaas.conf" do
     source 'jaas.conf.erb'
@@ -51,7 +51,7 @@ if node['hbase']['metrics']['enabled']
   case node['hbase']['metrics']['provider']
   when 'prometheus'
     env_vars['hbase_opts'] = "#{env_vars['hbase_opts']} -javaagent:#{node['hbase']['install_dir']}/lib/jmx_prometheus_javaagent.jar=#{node['hbase']['metrics']['prometheus']['port']}:#{node['hbase']['conf_dir']}/prometheus.yml"
-    
+
     cookbook_file "#{node['hbase']['install_dir']}/lib/jmx_prometheus_javaagent.jar" do
       source 'jmx_prometheus_javaagent.jar'
       owner node['hbase']['user']
@@ -59,7 +59,7 @@ if node['hbase']['metrics']['enabled']
       mode '0644'
       action :create
     end
-    
+
     template "#{node['hbase']['conf_dir']}/prometheus.yml" do
       source 'prometheus.yml.erb'
       owner node['hbase']['user']

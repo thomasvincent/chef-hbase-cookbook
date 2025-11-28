@@ -6,7 +6,7 @@ describe HBase::Helper do
     Class.new do
       include HBase::Helper
       attr_accessor :node
-      
+
       def initialize
         @node = {
           'hbase' => {
@@ -14,41 +14,41 @@ describe HBase::Helper do
               'hbase.rootdir' => 'file:///var/hbase',
               'hbase.zookeeper.quorum' => 'localhost',
               'hbase.zookeeper.property.clientPort' => '2181',
-              'hbase.cluster.distributed' => false
+              'hbase.cluster.distributed' => false,
             },
             'security' => {
               'authentication' => 'simple',
               'kerberos' => {
                 'principal' => 'hbase/_HOST',
-                'realm' => 'EXAMPLE.COM'
-              }
+                'realm' => 'EXAMPLE.COM',
+              },
             },
             'java_opts' => '-Xmx1024m',
             'log_dir' => '/var/log/hbase',
             'log_level' => 'INFO',
             'conf_dir' => '/etc/hbase/conf',
             'topology' => {
-              'role' => 'master'
-            }
-          }
+              'role' => 'master',
+            },
+          },
         }
       end
-      
+
       def [](key)
         @node[key]
       end
     end
   end
-  
+
   let(:helper) { dummy_class.new }
 
   describe '#config_to_xml_properties' do
     it 'transforms a hash into sorted XML properties' do
       config = {
         'property.two' => 'value2',
-        'property.one' => 'value1'
+        'property.one' => 'value1',
       }
-      
+
       result = helper.config_to_xml_properties(config)
       expect(result).to include('<property>')
       expect(result).to include('<name>property.one</name>')
@@ -64,26 +64,26 @@ describe HBase::Helper do
     it 'fills in required configurations with defaults if not provided' do
       custom_config = { 'custom.property' => 'custom_value' }
       result = helper.validate_config(custom_config)
-      
+
       # Should have all default values
       expect(result['hbase.rootdir']).to eq('file:///var/hbase')
       expect(result['hbase.zookeeper.quorum']).to eq('localhost')
       expect(result['hbase.cluster.distributed']).to eq(false)
-      
+
       # Should preserve custom values
       expect(result['custom.property']).to eq('custom_value')
     end
-    
+
     it 'preserves provided values over defaults' do
-      custom_config = { 
+      custom_config = {
         'custom.property' => 'custom_value',
-        'hbase.rootdir' => 'hdfs://example:8020/hbase'
+        'hbase.rootdir' => 'hdfs://example:8020/hbase',
       }
       result = helper.validate_config(custom_config)
-      
+
       # Custom value should override default
       expect(result['hbase.rootdir']).to eq('hdfs://example:8020/hbase')
-      
+
       # Other defaults should be preserved
       expect(result['hbase.zookeeper.quorum']).to eq('localhost')
       expect(result['hbase.cluster.distributed']).to eq(false)
@@ -94,7 +94,7 @@ describe HBase::Helper do
     it 'returns nil when authentication is not kerberos' do
       expect(helper.hbase_principal).to be_nil
     end
-    
+
     it 'returns the principal with realm when kerberos is enabled' do
       helper.node['hbase']['security']['authentication'] = 'kerberos'
       expect(helper.hbase_principal).to eq('hbase/_HOST@EXAMPLE.COM')
@@ -105,7 +105,7 @@ describe HBase::Helper do
     it 'returns the zookeeper connection string with port' do
       expect(helper.zk_connection_string).to eq('localhost:2181')
     end
-    
+
     it 'handles multiple quorum members' do
       helper.node['hbase']['config']['hbase.zookeeper.quorum'] = 'zk1,zk2,zk3'
       expect(helper.zk_connection_string).to eq('zk1:2181,zk2:2181,zk3:2181')
@@ -117,7 +117,7 @@ describe HBase::Helper do
       helper.node['hbase']['topology']['role'] = 'master'
       expect(helper.master?).to be true
     end
-    
+
     it 'returns false when node role is not master' do
       helper.node['hbase']['topology']['role'] = 'regionserver'
       expect(helper.master?).to be false
@@ -129,7 +129,7 @@ describe HBase::Helper do
       helper.node['hbase']['topology']['role'] = 'regionserver'
       expect(helper.regionserver?).to be true
     end
-    
+
     it 'returns false when node role is not regionserver' do
       helper.node['hbase']['topology']['role'] = 'master'
       expect(helper.regionserver?).to be false
@@ -141,7 +141,7 @@ describe HBase::Helper do
       helper.node['hbase']['topology']['role'] = 'backup_master'
       expect(helper.backup_master?).to be true
     end
-    
+
     it 'returns false when node role is not backup_master' do
       helper.node['hbase']['topology']['role'] = 'master'
       expect(helper.backup_master?).to be false
@@ -154,7 +154,7 @@ describe HBase::Helper do
       expect(helper.java_options).to include('-Dhbase.log.dir=/var/log/hbase')
       expect(helper.java_options).to include('-Dhbase.security.logger=INFO,console')
     end
-    
+
     it 'adds kerberos options when kerberos is enabled' do
       helper.node['hbase']['security']['authentication'] = 'kerberos'
       expect(helper.java_options).to include('-Djava.security.auth.login.config=/etc/hbase/conf/jaas.conf')

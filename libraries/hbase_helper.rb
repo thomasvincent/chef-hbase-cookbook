@@ -17,7 +17,7 @@ module HBase
       {
         'hbase.rootdir' => node['hbase']['config']['hbase.rootdir'],
         'hbase.zookeeper.quorum' => node['hbase']['config']['hbase.zookeeper.quorum'],
-        'hbase.cluster.distributed' => node['hbase']['config']['hbase.cluster.distributed']
+        'hbase.cluster.distributed' => node['hbase']['config']['hbase.cluster.distributed'],
       }.merge(config)
     end
 
@@ -26,8 +26,6 @@ module HBase
       if node['hbase']['security']['authentication'] == 'kerberos'
         principal = node['hbase']['security']['kerberos']['principal']
         "#{principal}@#{node['hbase']['security']['kerberos']['realm']}"
-      else
-        nil
       end
     end
 
@@ -56,13 +54,13 @@ module HBase
     # Returns a list of nodes in the cluster with a specific role
     def nodes_with_role(role, environment = node.chef_environment)
       results = []
-      
+
       begin
         results = search(:node, "chef_environment:#{environment} AND hbase_topology_role:#{role}")
       rescue Net::HTTPClientException, Chef::Exceptions::InvalidDataBagPath
         Chef::Log.warn("Could not search for nodes with role #{role}. This may happen in ChefSpec runs")
       end
-      
+
       results.sort_by { |n| n['name'] }
     end
 
@@ -80,5 +78,4 @@ end
 Chef::DSL::Recipe.include(HBase::Helper)
 if defined?(Chef::DSL::Resource)
   Chef::DSL::Resource.include(HBase::Helper)
-else
 end

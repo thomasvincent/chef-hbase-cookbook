@@ -38,32 +38,32 @@ action :create do
   # Use the systemd_unit resource introduced in Chef 14
   systemd_unit "hbase-#{new_resource.service_name}.service" do
     content({
-      Unit: {
-        Description: "Apache HBase #{new_resource.service_name.capitalize} Service",
-        After: 'network.target',
-        Documentation: 'https://hbase.apache.org',
-      },
-      Service: {
-        Type: 'forking',
-        User: new_resource.user,
-        Group: new_resource.group,
-        Environment: [
-          "JAVA_HOME=#{new_resource.java_home}",
-          "HBASE_OPTS=#{new_resource.java_opts}"
-        ],
-        EnvironmentFile: "#{new_resource.conf_dir}/hbase-env.sh",
-        ExecStart: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh start #{new_resource.service_name}",
-        ExecStop: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh stop #{new_resource.service_name}",
-        Restart: 'on-failure',
-        RestartSec: '10s',
-        LimitNOFILE: node['hbase']['limits']['nofile'],
-        LimitNPROC: node['hbase']['limits']['nproc'],
-        PIDFile: "/var/run/hbase/hbase-#{new_resource.user}-#{new_resource.service_name}.pid",
-      },
-      Install: {
-        WantedBy: 'multi-user.target',
-      },
-    })
+              Unit: {
+                Description: "Apache HBase #{new_resource.service_name.capitalize} Service",
+                After: 'network.target',
+                Documentation: 'https://hbase.apache.org',
+              },
+              Service: {
+                Type: 'forking',
+                User: new_resource.user,
+                Group: new_resource.group,
+                Environment: [
+                  "JAVA_HOME=#{new_resource.java_home}",
+                  "HBASE_OPTS=#{new_resource.java_opts}",
+                ],
+                EnvironmentFile: "#{new_resource.conf_dir}/hbase-env.sh",
+                ExecStart: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh start #{new_resource.service_name}",
+                ExecStop: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh stop #{new_resource.service_name}",
+                Restart: 'on-failure',
+                RestartSec: '10s',
+                LimitNOFILE: node['hbase']['limits']['nofile'],
+                LimitNPROC: node['hbase']['limits']['nproc'],
+                PIDFile: "/var/run/hbase/hbase-#{new_resource.user}-#{new_resource.service_name}.pid",
+              },
+              Install: {
+                WantedBy: 'multi-user.target',
+              },
+            })
     action :create
   end
 

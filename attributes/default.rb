@@ -105,21 +105,21 @@ default['hbase']['service_mapping'] = {
   'master' => {
     'service_name' => 'master',
     'start_priority' => 10,
-    'conf_file' => 'hbase-site.xml'
+    'conf_file' => 'hbase-site.xml',
   },
   'regionserver' => {
     'service_name' => 'regionserver',
     'start_priority' => 20,
-    'conf_file' => 'hbase-site.xml'
+    'conf_file' => 'hbase-site.xml',
   },
   'thrift' => {
     'service_name' => 'thrift',
     'start_priority' => 30,
-    'conf_file' => 'hbase-site.xml'
+    'conf_file' => 'hbase-site.xml',
   },
   'rest' => {
     'service_name' => 'rest',
     'start_priority' => 40,
-    'conf_file' => 'hbase-site.xml'
-  }
+    'conf_file' => 'hbase-site.xml',
+  },
 }

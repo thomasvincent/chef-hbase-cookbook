@@ -24,7 +24,7 @@ describe 'hbase_service' do
           Unit: {
             Description: 'Apache HBase Master Service',
             After: 'network.target',
-            Documentation: 'https://hbase.apache.org'
+            Documentation: 'https://hbase.apache.org',
           },
           Service: {
             Type: 'forking',
@@ -32,15 +32,15 @@ describe 'hbase_service' do
             Group: 'hbase',
             Environment: [
               'JAVA_HOME=/usr/lib/jvm/java-11-openjdk',
-              'HBASE_OPTS=-Xmx1024m'
+              'HBASE_OPTS=-Xmx1024m',
             ],
             ExecStart: '/opt/hbase/current/bin/hbase-daemon.sh start master',
             ExecStop: '/opt/hbase/current/bin/hbase-daemon.sh stop master',
             Restart: 'on-failure',
           },
           Install: {
-            WantedBy: 'multi-user.target'
-          }
+            WantedBy: 'multi-user.target',
+          },
         }
       )
     end
@@ -50,9 +50,9 @@ describe 'hbase_service' do
     recipe do
       hbase_service 'master' do
         service_config({
-          'hbase.master.port' => 16001,
-          'hbase.master.info.port' => 16011
-        })
+                         'hbase.master.port' => 16001,
+                         'hbase.master.info.port' => 16011,
+                       })
         action :create
       end
     end

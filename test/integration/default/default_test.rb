@@ -7,7 +7,7 @@ control 'hbase-1.0' do
   impact 1.0
   title 'Basic system configuration'
   desc 'Validates the system user, groups and directories are properly configured'
-  
+
   # Check for user/group
   describe user('hbase') do
     it { should exist }
@@ -62,7 +62,7 @@ control 'hbase-2.0' do
     its('owner') { should eq 'hbase' }
     its('group') { should eq 'hbase' }
     its('mode') { should cmp '0644' }
-    its('content') { should match /<name>hbase.rootdir<\/name>/ }
+    its('content') { should match %r{<name>hbase.rootdir</name>} }
   end
 
   describe file('/etc/hbase/conf/hbase-env.sh') do
@@ -118,20 +118,20 @@ control 'hbase-4.0' do
   impact 1.0
   title 'Java Installation for HBase'
   desc 'Validates that Java is properly installed and configured for HBase'
-  
+
   # Check Java installation
   describe command('java -version') do
     its('exit_status') { should eq 0 }
     its('stderr') { should match /(openjdk|jdk) version "(1\.8|8|11|17)"/ }
   end
-  
+
   # Check JAVA_HOME environment
   describe file('/etc/profile.d/java_home.sh') do
     it { should exist }
     its('mode') { should cmp '0755' }
     its('content') { should match /export JAVA_HOME=/ }
   end
-  
+
   # Check HBase env configuration has Java home
   describe file('/etc/hbase/conf/hbase-env.sh') do
     it { should exist }

@@ -57,7 +57,7 @@ describe 'hbase::default' do
       expect(chef_run).to start_hbase_service('master')
     end
   end
-  
+
   context 'When run as a region server' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
@@ -73,7 +73,7 @@ describe 'hbase::default' do
       expect(chef_run).to include_recipe('hbase::regionserver')
     end
   end
-  
+
   context 'When thrift service is enabled' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
@@ -89,7 +89,7 @@ describe 'hbase::default' do
       expect(chef_run).to include_recipe('hbase::thrift')
     end
   end
-  
+
   context 'When REST service is enabled' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')

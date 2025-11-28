@@ -21,7 +21,7 @@ control 'hbase-thrift-1.0' do
     its('content') { should include 'ExecStart=' }
     its('content') { should include 'thrift' }
   end
-  
+
   # Check if Thrift process is running
   describe processes('java') do
     its('commands') { should include /org.apache.hadoop.hbase.thrift.ThriftServer/ }
