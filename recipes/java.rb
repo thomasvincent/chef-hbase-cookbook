@@ -68,7 +68,7 @@ ruby_block 'verify_java_installation' do
       Chef::Log.info("Java installation verified: #{cmd.stderr}")
     end
   end
-  action :create
+  action :run
 end
 
 # Set JAVA_HOME in environment if needed
