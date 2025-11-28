@@ -16,5 +16,5 @@ Layout/TrailingEmptyLines:
   Enabled: true
 Layout/TrailingWhitespace:
   Enabled: true
-Chef/Correctness/SyntaxErrorsInMetadata:
+Chef/Correctness/InvalidVersionMetadata:
   Enabled: true
