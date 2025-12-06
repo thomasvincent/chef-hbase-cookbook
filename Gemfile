@@ -25,7 +25,7 @@ end
 
 group :test do
   # ChefSpec 9 requires RSpec < 3.12
-  gem 'rspec', '>= 3.11', '< 3.12'
+  gem 'rspec', '>= 3.11', '< 3.14'
   gem 'rspec-its', '~> 1.3'
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-console', '~> 0.9'
