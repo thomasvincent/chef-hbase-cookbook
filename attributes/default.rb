@@ -1,5 +1,5 @@
 # Basic configuration
-default['hbase']['version'] = '2.5.11'
+default['hbase']['version'] = '2.4.0'
 default['hbase']['mirror'] = 'https://downloads.apache.org/hbase'
 default['hbase']['checksum'] = nil # Set specific version checksum here
 default['hbase']['install_dir'] = '/opt/hbase'
