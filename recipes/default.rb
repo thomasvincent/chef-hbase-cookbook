@@ -17,6 +17,31 @@ include_recipe 'hbase::user'
 include_recipe 'hbase::install'
 include_recipe 'hbase::config'
 
+# Configure Kerberos security if enabled
+if node['hbase']['security']['authentication'] == 'kerberos'
+  Chef::Log.info('Configuring HBase with Kerberos authentication')
+
+  # Ensure Kerberos keytab exists and has correct permissions
+  file node['hbase']['security']['kerberos']['keytab'] do
+    owner node['hbase']['user']
+    group node['hbase']['group']
+    mode '0400'
+    action :create
+    only_if { ::File.exist?(node['hbase']['security']['kerberos']['keytab']) }
+  end
+
+  # Set Kerberos-specific configuration properties
+  node.default['hbase']['config']['hbase.security.authentication'] = 'kerberos'
+  node.default['hbase']['config']['hbase.security.authorization'] = node['hbase']['security']['authorization']
+  node.default['hbase']['config']['hbase.master.kerberos.principal'] = node['hbase']['security']['kerberos']['server_principal']
+  node.default['hbase']['config']['hbase.regionserver.kerberos.principal'] = node['hbase']['security']['kerberos']['regionserver_principal']
+  node.default['hbase']['config']['hbase.master.keytab.file'] = node['hbase']['security']['kerberos']['keytab']
+  node.default['hbase']['config']['hbase.regionserver.keytab.file'] = node['hbase']['security']['kerberos']['keytab']
+  node.default['hbase']['config']['hbase.rpc.protection'] = 'privacy'
+  node.default['hbase']['config']['hbase.coprocessor.master.classes'] = 'org.apache.hadoop.hbase.security.access.AccessController'
+  node.default['hbase']['config']['hbase.coprocessor.region.classes'] = 'org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.AccessController'
+end
+
 # Setup appropriate services based on node role
 case node['hbase']['topology']['role']
 when 'master'

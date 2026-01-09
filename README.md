@@ -14,14 +14,14 @@ This cookbook installs and configures Apache HBase - the Hadoop database, a dist
 - Fedora 36+
 
 ### Chef
-- Chef 17.0+
+- Chef 18.0+
 
 ### Cookbooks
 - `ark` - Used for installing HBase from binary releases
 
 ## Features
 
-- Installs and configures HBase in standalone or distributed mode
+- Installs and configures HBase 2.x in standalone or distributed mode
 - Supports HBase Master, RegionServer, and Backup Master roles
 - Supports optional REST and Thrift services
 - Full Kerberos security integration
@@ -83,21 +83,63 @@ node['hbase']['services']['rest']['config'] = {
 }
 ```
 
-### Configuring Kerberos Security
+## Security
+
+### Kerberos Authentication
+
+This cookbook provides full support for Kerberos authentication, which is the recommended security mechanism for production HBase deployments. When Kerberos is enabled, the cookbook automatically configures:
+
+- HBase Master and RegionServer Kerberos principals
+- Keytab file permissions and ownership
+- RPC protection settings
+- Access control coprocessors
+
+#### Prerequisites
+
+Before enabling Kerberos authentication, ensure:
+
+1. A working Kerberos KDC (Key Distribution Center) is available
+2. Kerberos client packages are installed on all HBase nodes
+3. Service principals are created for HBase (e.g., `hbase/_HOST@REALM`)
+4. Keytab files are distributed to all HBase nodes
+
+#### Configuration
+
+To enable Kerberos authentication:
 
 ```ruby
+# Enable Kerberos authentication
 node['hbase']['security']['authentication'] = 'kerberos'
 node['hbase']['security']['authorization'] = true
+
+# Configure Kerberos settings
 node['hbase']['security']['kerberos']['principal'] = 'hbase/_HOST'
 node['hbase']['security']['kerberos']['keytab'] = '/etc/hbase/conf/hbase.keytab'
 node['hbase']['security']['kerberos']['realm'] = 'EXAMPLE.COM'
-
-# Add these to hbase-site.xml
-node['hbase']['config']['hbase.security.authentication'] = 'kerberos'
-node['hbase']['config']['hbase.security.authorization'] = true
-node['hbase']['config']['hbase.master.kerberos.principal'] = 'hbase/_HOST@EXAMPLE.COM'
-node['hbase']['config']['hbase.regionserver.kerberos.principal'] = 'hbase/_HOST@EXAMPLE.COM'
+node['hbase']['security']['kerberos']['server_principal'] = 'hbase/_HOST@EXAMPLE.COM'
+node['hbase']['security']['kerberos']['regionserver_principal'] = 'hbase/_HOST@EXAMPLE.COM'
 ```
+
+The cookbook will automatically set the following hbase-site.xml properties when Kerberos is enabled:
+
+| Property | Value |
+|----------|-------|
+| `hbase.security.authentication` | `kerberos` |
+| `hbase.security.authorization` | `true` (if authorization enabled) |
+| `hbase.master.kerberos.principal` | Configured server principal |
+| `hbase.regionserver.kerberos.principal` | Configured regionserver principal |
+| `hbase.master.keytab.file` | Configured keytab path |
+| `hbase.regionserver.keytab.file` | Configured keytab path |
+| `hbase.rpc.protection` | `privacy` |
+| `hbase.coprocessor.master.classes` | `AccessController` |
+| `hbase.coprocessor.region.classes` | `TokenProvider,AccessController` |
+
+#### Security Best Practices
+
+1. **Keytab Protection**: Keytab files are automatically set to mode `0400` (read-only by owner)
+2. **Network Security**: Use firewall rules to restrict access to HBase ports
+3. **Audit Logging**: Enable HBase audit logging for security monitoring
+4. **Regular Rotation**: Implement regular keytab rotation procedures
 
 ### Metrics Collection
 
@@ -117,10 +159,10 @@ node['hbase']['metrics']['graphite']['prefix'] = 'prod.hbase'
 
 ### Java Compatibility
 
-This cookbook includes a dedicated recipe for handling Java compatibility. HBase officially supports Java 8, with preliminary support for Java 11 and Java 17.
+This cookbook includes a dedicated recipe for handling Java compatibility. HBase 2.4.0 officially supports Java 8, with preliminary support for Java 11.
 
 ```ruby
-# Set Java version (8, 11, or 17)
+# Set Java version (8 or 11)
 node['hbase']['java']['version'] = '11'
 
 # Optionally, set a custom JAVA_HOME (if not set, it will be auto-detected)
