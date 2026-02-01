@@ -4,6 +4,20 @@ describe 'hbase_service' do
   step_into :hbase_service
   platform 'ubuntu', '22.04'
 
+  default_attributes['hbase'] = {
+    'user' => 'hbase',
+    'group' => 'hbase',
+    'install_dir' => '/opt/hbase',
+    'conf_dir' => '/etc/hbase/conf',
+    'log_dir' => '/var/log/hbase',
+    'java_home' => '/usr/lib/jvm/java-11-openjdk',
+    'java_opts' => '-Xmx1024m',
+    'limits' => {
+      'nofile' => 32_768,
+      'nproc' => 65_536,
+    },
+  }
+
   context 'create action' do
     recipe do
       hbase_service 'master' do
@@ -33,9 +47,14 @@ describe 'hbase_service' do
               'JAVA_HOME=/usr/lib/jvm/java-11-openjdk',
               'HBASE_OPTS=-Xmx1024m',
             ],
+            EnvironmentFile: '/etc/hbase/conf/hbase-env.sh',
             ExecStart: '/opt/hbase/current/bin/hbase-daemon.sh start master',
             ExecStop: '/opt/hbase/current/bin/hbase-daemon.sh stop master',
             Restart: 'on-failure',
+            RestartSec: '10s',
+            LimitNOFILE: 32_768,
+            LimitNPROC: 65_536,
+            PIDFile: '/var/run/hbase/hbase-hbase-master.pid',
           },
           Install: {
             WantedBy: 'multi-user.target',
