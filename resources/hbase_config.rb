@@ -7,7 +7,7 @@ property :user, String, default: lazy { node['hbase']['user'] }
 property :group, String, default: lazy { node['hbase']['group'] }
 property :mode, String, default: '0644'
 property :variables, Hash, default: {}
-property :config_type, String, equal_to: ['xml', 'properties', 'env', 'script'], default: 'xml'
+property :config_type, String, equal_to: %w(xml properties env script), default: 'xml'
 property :template_source, String
 property :restart_services, Array, default: []
 property :use_helpers, [true, false], default: false

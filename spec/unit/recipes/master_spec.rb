@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'hbase::master' do
   context 'When all attributes are default, on Ubuntu 22.04' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
       runner.converge(described_recipe)
     end
 
@@ -29,10 +29,10 @@ describe 'hbase::master' do
 
   context 'With custom service configuration' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
-      runner.node.normal['hbase']['service_mapping']['master']['config'] = {
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['service_mapping']['master']['config'] = {
         'hbase.master.port' => 16001,
-        'hbase.master.info.port' => 16011
+        'hbase.master.info.port' => 16011,
       }
       runner.converge(described_recipe)
     end
@@ -41,7 +41,7 @@ describe 'hbase::master' do
       expect(chef_run).to create_hbase_service('master').with(
         service_config: {
           'hbase.master.port' => 16001,
-          'hbase.master.info.port' => 16011
+          'hbase.master.info.port' => 16011,
         }
       )
     end

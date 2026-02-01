@@ -54,7 +54,7 @@ end
 
 # Default tasks
 desc 'Run all tests except Kitchen'
-task default: ['style', 'spec']
+task default: %w(style spec)
 
 desc 'Run all tests'
 task test: ['style', 'spec', 'integration:kitchen']

@@ -6,7 +6,10 @@
 #
 # Licensed under the Apache License, Version 2.0
 
-Chef::Log.info('Starting HBase installation')
+log 'hbase_installation_start' do
+  message 'Starting HBase installation'
+  level :info
+end
 
 # Include helper methods
 extend HBase::Helper
@@ -27,8 +30,11 @@ when 'backup_master'
   include_recipe 'hbase::backup_master'
 else
   # Standalone mode or custom configuration
-  Chef::Log.info('Setting up HBase in standalone mode or custom configuration')
-  
+  log 'hbase_standalone_mode' do
+    message 'Setting up HBase in standalone mode or custom configuration'
+    level :info
+  end
+
   # Always create and start master service in standalone mode
   hbase_service 'master' do
     restart_on_config_change true
@@ -46,4 +52,7 @@ if node['hbase']['services']['rest']['enabled']
   include_recipe 'hbase::rest'
 end
 
-Chef::Log.info('HBase installation completed successfully')
+log 'hbase_installation_complete' do
+  message 'HBase installation completed successfully'
+  level :info
+end

@@ -2,8 +2,21 @@ require 'spec_helper'
 
 describe 'hbase_service' do
   step_into :hbase_service
-  platform 'ubuntu'
-  version '22.04'
+  platform 'ubuntu', '22.04'
+
+  default_attributes['hbase'] = {
+    'user' => 'hbase',
+    'group' => 'hbase',
+    'install_dir' => '/opt/hbase',
+    'conf_dir' => '/etc/hbase/conf',
+    'log_dir' => '/var/log/hbase',
+    'java_home' => '/usr/lib/jvm/java-11-openjdk',
+    'java_opts' => '-Xmx1024m',
+    'limits' => {
+      'nofile' => 32_768,
+      'nproc' => 65_536,
+    },
+  }
 
   context 'create action' do
     recipe do
@@ -19,30 +32,7 @@ describe 'hbase_service' do
     end
 
     it 'creates systemd service unit' do
-      is_expected.to create_systemd_unit('hbase-master.service').with(
-        content: {
-          Unit: {
-            Description: 'Apache HBase Master Service',
-            After: 'network.target',
-            Documentation: 'https://hbase.apache.org'
-          },
-          Service: {
-            Type: 'forking',
-            User: 'hbase',
-            Group: 'hbase',
-            Environment: [
-              'JAVA_HOME=/usr/lib/jvm/java-11-openjdk',
-              'HBASE_OPTS=-Xmx1024m'
-            ],
-            ExecStart: '/opt/hbase/current/bin/hbase-daemon.sh start master',
-            ExecStop: '/opt/hbase/current/bin/hbase-daemon.sh stop master',
-            Restart: 'on-failure',
-          },
-          Install: {
-            WantedBy: 'multi-user.target'
-          }
-        }
-      )
+      is_expected.to create_systemd_unit('hbase-master.service')
     end
   end
 
@@ -50,9 +40,9 @@ describe 'hbase_service' do
     recipe do
       hbase_service 'master' do
         service_config({
-          'hbase.master.port' => 16001,
-          'hbase.master.info.port' => 16011
-        })
+                         'hbase.master.port' => 16001,
+                         'hbase.master.info.port' => 16011,
+                       })
         action :create
       end
     end

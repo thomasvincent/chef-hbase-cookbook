@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'hbase::regionserver' do
   context 'When all attributes are default, on Ubuntu 22.04' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
       runner.converge(described_recipe)
     end
 
@@ -29,10 +29,10 @@ describe 'hbase::regionserver' do
 
   context 'With custom service configuration' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
-      runner.node.normal['hbase']['service_mapping']['regionserver']['config'] = {
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['service_mapping']['regionserver']['config'] = {
         'hbase.regionserver.port' => 16021,
-        'hbase.regionserver.info.port' => 16031
+        'hbase.regionserver.info.port' => 16031,
       }
       runner.converge(described_recipe)
     end
@@ -41,7 +41,7 @@ describe 'hbase::regionserver' do
       expect(chef_run).to create_hbase_service('regionserver').with(
         service_config: {
           'hbase.regionserver.port' => 16021,
-          'hbase.regionserver.info.port' => 16031
+          'hbase.regionserver.info.port' => 16031,
         }
       )
     end
