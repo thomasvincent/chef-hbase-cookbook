@@ -58,7 +58,7 @@ module HBase
       begin
         results = search(:node, "chef_environment:#{environment} AND hbase_topology_role:#{role}")
       rescue Net::HTTPClientException, Chef::Exceptions::InvalidDataBagPath
-        Chef::Log.warn("Could not search for nodes with role #{role}. This may happen in ChefSpec runs")
+        Chef.logger.warn("Could not search for nodes with role #{role}. This may happen in ChefSpec runs")
       end
 
       results.sort_by { |n| n['name'] }

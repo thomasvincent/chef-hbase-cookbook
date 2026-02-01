@@ -1,4 +1,5 @@
 require 'chefspec'
+require 'chefspec/policyfile'
 require 'simplecov'
 
 SimpleCov.start do

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'hbase::user' do
   context 'When all attributes are default, on Ubuntu 22.04' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
       runner.converge(described_recipe)
     end
 
@@ -21,7 +21,7 @@ describe 'hbase::user' do
     it 'creates hbase user' do
       expect(chef_run).to create_user('hbase').with(
         uid: 2313,
-        gid: 2313,
+        gid: 'hbase',
         system: true,
         home: '/opt/hbase',
         shell: '/bin/bash'
@@ -37,11 +37,11 @@ describe 'hbase::user' do
 
   context 'When user attributes are customized' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
-      runner.node.normal['hbase']['user'] = 'custom_hbase'
-      runner.node.normal['hbase']['group'] = 'custom_hbase'
-      runner.node.normal['hbase']['uid'] = 1234
-      runner.node.normal['hbase']['gid'] = 1234
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['user'] = 'custom_hbase'
+      runner.node.override['hbase']['group'] = 'custom_hbase'
+      runner.node.override['hbase']['uid'] = 1234
+      runner.node.override['hbase']['gid'] = 1234
       runner.converge(described_recipe)
     end
 
@@ -55,7 +55,7 @@ describe 'hbase::user' do
     it 'creates custom hbase user' do
       expect(chef_run).to create_user('custom_hbase').with(
         uid: 1234,
-        gid: 1234,
+        gid: 'custom_hbase',
         system: true
       )
     end

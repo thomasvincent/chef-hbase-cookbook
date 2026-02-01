@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'hbase::install' do
   context 'When all attributes are default, on Ubuntu 22.04' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
       runner.converge(described_recipe)
     end
 
@@ -58,9 +58,9 @@ describe 'hbase::install' do
 
   context 'When using package installation method' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
-      runner.node.normal['hbase']['install']['method'] = 'package'
-      runner.node.normal['hbase']['install']['packages'] = ['hbase']
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['install']['method'] = 'package'
+      runner.node.override['hbase']['install']['packages'] = ['hbase']
       runner.converge(described_recipe)
     end
 
