@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe 'hbase_service' do
   step_into :hbase_service
-  platform 'ubuntu'
-  version '22.04'
+  platform 'ubuntu', '22.04'
 
   context 'create action' do
     recipe do
