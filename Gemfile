@@ -9,7 +9,7 @@ gem 'chef-cli', '~> 5.6'
 gem 'chefspec', '~> 9.3'
 # kitchen-inspec is limited to inspec < 7, so stick to the 6.x series for now.
 gem 'inspec', '~> 6.0'
-gem 'test-kitchen', '~> 3.7'
+gem 'test-kitchen', '~> 4.0'
 
 # Test Kitchen drivers
 gem 'kitchen-dokken', '~> 2.20'
