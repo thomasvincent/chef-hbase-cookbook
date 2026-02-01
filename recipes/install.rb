@@ -7,12 +7,12 @@
 # Licensed under the Apache License, Version 2.0
 
 # Create required directories
-%w(
-  install_dir
-  conf_dir
-  log_dir
-  pid_dir
-).each do |dir|
+# Note: install_dir is excluded for binary installs because the ark resource
+# manages that path as a symlink. Creating it as a directory would cause EISDIR.
+install_dirs = %w(conf_dir log_dir pid_dir)
+install_dirs << 'install_dir' unless node['hbase']['install']['method'] == 'binary'
+
+install_dirs.each do |dir|
   directory node['hbase'][dir] do
     owner node['hbase']['user']
     group node['hbase']['group']
@@ -54,12 +54,9 @@ when 'binary'
     action :install
   end
 
-  # Create symlink to make it easier to reference
-  link "#{node['hbase']['install_dir']}/current" do
-    to "#{node['hbase']['install_dir']}/hbase-#{node['hbase']['version']}"
-    owner node['hbase']['user']
-    group node['hbase']['group']
-  end
+  # The ark resource with action :install creates a symlink at home_dir
+  # pointing to the versioned extraction directory, so no additional
+  # symlink is needed.
 
 when 'package'
   # Install from system packages
