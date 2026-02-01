@@ -15,12 +15,8 @@ describe 'hbase::install' do
       expect { chef_run }.to_not raise_error
     end
 
-    it 'creates hbase install directory' do
-      expect(chef_run).to create_directory('/opt/hbase').with(
-        owner: 'hbase',
-        group: 'hbase',
-        mode: '0755'
-      )
+    it 'does not create hbase install directory for binary install' do
+      expect(chef_run).not_to create_directory('/opt/hbase')
     end
 
     it 'creates hbase conf directory' do
@@ -51,9 +47,7 @@ describe 'hbase::install' do
       expect(chef_run).to install_ark('hbase')
     end
 
-    it 'creates a symlink to the current version' do
-      expect(chef_run).to create_link('/opt/hbase/current')
-    end
+    # ark :install action manages the symlink at home_dir automatically
   end
 
   context 'When using package installation method' do
