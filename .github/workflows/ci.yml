@@ -57,11 +57,11 @@ jobs:
       fail-fast: false
       matrix:
         suite: ['default', 'distributed']
-        os: ['ubuntu-20-04', 'ubuntu-22-04', 'debian-11', 'almalinux-8', 'almalinux-9', 'amazonlinux-2', 'fedora-36']
+        os: ['ubuntu-2004', 'ubuntu-2204', 'debian-11', 'almalinux-9', 'amazonlinux-2023']
         include:
-          - os: 'ubuntu-20-04'
+          - os: 'ubuntu-2004'
             suite: 'thrift'
-          - os: 'ubuntu-20-04'
+          - os: 'ubuntu-2004'
             suite: 'rest'
     steps:
     - uses: actions/checkout@v6
@@ -78,6 +78,8 @@ jobs:
         sudo rm -rf /usr/share/dotnet
         sudo rm -rf /opt/ghc
         sudo rm -rf /usr/local/share/boost
+    - name: Install Policyfile dependencies
+      run: bundle exec chef-cli install Policyfile.rb
     - name: Run Test Kitchen
       run: |
         bundle exec kitchen test ${{ matrix.suite }}-${{ matrix.os }}
