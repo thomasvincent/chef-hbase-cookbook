@@ -6,7 +6,7 @@
 driver:
   name: dokken
   privileged: true
-  chef_version: current
+  chef_version: "18"
   chef_license: accept-no-persist
 
 transport:
