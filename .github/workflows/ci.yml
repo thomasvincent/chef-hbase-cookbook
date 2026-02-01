@@ -45,7 +45,7 @@ jobs:
         ruby-version: '3.2'
         bundler-cache: true
     - name: Install Policyfile dependencies
-      run: bundle exec chef install Policyfile.rb
+      run: bundle exec chef-cli install Policyfile.rb
     - name: Run ChefSpec
       run: bundle exec rspec spec/
 
