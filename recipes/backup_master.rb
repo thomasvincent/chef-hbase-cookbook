@@ -7,7 +7,10 @@
 # Licensed under the Apache License, Version 2.0
 
 # Setup HBase Backup Master service
-Chef::Log.info("Setting up HBase Backup Master on #{node['fqdn']}")
+log 'hbase_backup_master_setup' do
+  message lazy { "Setting up HBase Backup Master on #{node['fqdn']}" }
+  level :info
+end
 
 # Create and start the master service in backup mode
 # Technically, the service is the same as master, but this node

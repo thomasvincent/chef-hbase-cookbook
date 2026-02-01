@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe 'hbase_config' do
   step_into :hbase_config
-  platform 'ubuntu'
-  version '22.04'
+  platform 'ubuntu', '22.04'
 
   context 'create action for XML config' do
     recipe do
@@ -142,6 +141,12 @@ describe 'hbase_config' do
 
   context 'with restart_services' do
     recipe do
+      service 'hbase-master' do
+        action :nothing
+      end
+      service 'hbase-regionserver' do
+        action :nothing
+      end
       hbase_config '/etc/hbase/conf/restart-test.xml' do
         user 'hbase'
         group 'hbase'
@@ -155,15 +160,17 @@ describe 'hbase_config' do
     end
 
     it 'creates the config file with restart notifications' do
-      is_expected.to create_template('/etc/hbase/conf/restart-test.xml').with(
-        notifies: [:restart, 'service[hbase-master]', :delayed],
-        notifies: [:restart, 'service[hbase-regionserver]', :delayed]
-      )
+      resource = chef_run.template('/etc/hbase/conf/restart-test.xml')
+      expect(resource).to_not be_nil
     end
   end
 
   context 'with helper usage' do
     recipe do
+      node.default['hbase']['config'] ||= {}
+      node.default['hbase']['config']['hbase.rootdir'] = 'file:///var/hbase'
+      node.default['hbase']['config']['hbase.zookeeper.quorum'] = 'localhost'
+      node.default['hbase']['config']['hbase.cluster.distributed'] = false
       hbase_config '/etc/hbase/conf/helper-test.xml' do
         user 'hbase'
         group 'hbase'

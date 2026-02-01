@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'hbase::config' do
   context 'When all attributes are default, on Ubuntu 22.04' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
       runner.converge(described_recipe)
     end
 
@@ -47,11 +47,11 @@ describe 'hbase::config' do
 
   context 'When using Kerberos authentication' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
-      runner.node.normal['hbase']['security']['authentication'] = 'kerberos'
-      runner.node.normal['hbase']['security']['kerberos']['principal'] = 'hbase/_HOST'
-      runner.node.normal['hbase']['security']['kerberos']['keytab'] = '/etc/hbase/conf/hbase.keytab'
-      runner.node.normal['hbase']['security']['kerberos']['realm'] = 'EXAMPLE.COM'
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['security']['authentication'] = 'kerberos'
+      runner.node.override['hbase']['security']['kerberos']['principal'] = 'hbase/_HOST'
+      runner.node.override['hbase']['security']['kerberos']['keytab'] = '/etc/hbase/conf/hbase.keytab'
+      runner.node.override['hbase']['security']['kerberos']['realm'] = 'EXAMPLE.COM'
       runner.converge(described_recipe)
     end
 
@@ -66,10 +66,10 @@ describe 'hbase::config' do
 
   context 'When using HDFS for rootdir' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
-      runner.node.normal['hbase']['config']['hbase.rootdir'] = 'hdfs://namenode:8020/hbase'
-      runner.node.normal['hbase']['hadoop']['core_site'] = { 'fs.defaultFS' => 'hdfs://namenode:8020' }
-      runner.node.normal['hbase']['hadoop']['hdfs_site'] = { 'dfs.replication' => 3 }
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['config']['hbase.rootdir'] = 'hdfs://namenode:8020/hbase'
+      runner.node.override['hbase']['hadoop']['core_site'] = { 'fs.defaultFS' => 'hdfs://namenode:8020' }
+      runner.node.override['hbase']['hadoop']['hdfs_site'] = { 'dfs.replication' => 3 }
       runner.converge(described_recipe)
     end
 
@@ -94,9 +94,9 @@ describe 'hbase::config' do
 
   context 'When running in distributed mode with backup masters' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '22.04')
-      runner.node.normal['hbase']['config']['hbase.cluster.distributed'] = true
-      runner.node.normal['hbase']['topology']['backup_masters'] = ['backup1.example.com', 'backup2.example.com']
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['config']['hbase.cluster.distributed'] = true
+      runner.node.override['hbase']['topology']['backup_masters'] = ['backup1.example.com', 'backup2.example.com']
       runner.converge(described_recipe)
     end
 
