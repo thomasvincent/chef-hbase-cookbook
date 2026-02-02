@@ -11,6 +11,7 @@ describe 'hbase::default' do
 
     before do
       stub_command('test -L /opt/hbase/current').and_return(false)
+      stub_command('java -version').and_return(true)
     end
 
     it 'converges successfully' do
@@ -67,6 +68,7 @@ describe 'hbase::default' do
 
     before do
       stub_command('test -L /opt/hbase/current').and_return(false)
+      stub_command('java -version').and_return(true)
     end
 
     it 'includes the hbase::regionserver recipe' do
@@ -83,6 +85,7 @@ describe 'hbase::default' do
 
     before do
       stub_command('test -L /opt/hbase/current').and_return(false)
+      stub_command('java -version').and_return(true)
     end
 
     it 'includes the hbase::thrift recipe' do
@@ -99,6 +102,7 @@ describe 'hbase::default' do
 
     before do
       stub_command('test -L /opt/hbase/current').and_return(false)
+      stub_command('java -version').and_return(true)
     end
 
     it 'includes the hbase::rest recipe' do

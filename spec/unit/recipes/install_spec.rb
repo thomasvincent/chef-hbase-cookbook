@@ -9,6 +9,7 @@ describe 'hbase::install' do
 
     before do
       stub_command('test -L /opt/hbase/current').and_return(false)
+      stub_command('java -version').and_return(true)
     end
 
     it 'converges successfully' do
