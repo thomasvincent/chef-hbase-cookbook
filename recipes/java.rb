@@ -58,6 +58,8 @@ ruby_block 'verify_java_installation' do
     end
   end
   action :run
+  not_if 'java -version'
+  action :run
 end
 
 # Set JAVA_HOME in environment if needed
