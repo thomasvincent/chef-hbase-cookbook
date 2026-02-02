@@ -51,11 +51,10 @@ action :create do
                   "JAVA_HOME=#{new_resource.java_home}",
                   "HBASE_OPTS=#{new_resource.java_opts}",
                 ],
-                EnvironmentFile: "#{new_resource.conf_dir}/hbase-env.sh",
                 ExecStart: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh start #{new_resource.service_name}",
                 ExecStop: "#{new_resource.install_dir}/current/bin/hbase-daemon.sh stop #{new_resource.service_name}",
                 Restart: 'on-failure',
-                RestartSec: '10s',
+                RestartSec: 10,
                 LimitNOFILE: node['hbase']['limits']['nofile'],
                 LimitNPROC: node['hbase']['limits']['nproc'],
                 PIDFile: "/var/run/hbase/hbase-#{new_resource.user}-#{new_resource.service_name}.pid",
@@ -64,6 +63,7 @@ action :create do
                 WantedBy: 'multi-user.target',
               },
             })
+    verify false
     action :create
   end
 

@@ -39,19 +39,8 @@ when 'rhel', 'fedora'
     action :install
   end
 when 'amazon'
-  if jdk_version.to_i == 8
-    package 'java-1.8.0-openjdk-devel' do
-      action :install
-    end
-  elsif jdk_version.to_i == 11
-    execute 'install-java-11' do
-      command 'amazon-linux-extras install java-openjdk11 -y'
-      not_if 'rpm -q java-11-openjdk-devel'
-    end
-  else
-    package "java-#{jdk_version}-openjdk-devel" do
-      action :install
-    end
+  package "java-#{jdk_version}-openjdk-devel" do
+    action :install
   end
 else
   Chef::Log.warn("Unsupported platform family for Java installation: #{node['platform_family']}. Please install Java manually.")
