@@ -50,7 +50,7 @@ action :create do
                 Environment: [
                   "JAVA_HOME=#{new_resource.java_home}",
                   "HBASE_OPTS=#{new_resource.java_opts}",
-                  "HBASE_PID_DIR=/var/run/hbase",
+                  'HBASE_PID_DIR=/var/run/hbase',
                   "HBASE_LOG_DIR=#{new_resource.log_dir}",
                 ],
                 ExecStart: "#{new_resource.install_dir}/bin/hbase-daemon.sh start #{new_resource.service_name}",
