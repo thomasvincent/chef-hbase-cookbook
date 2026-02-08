@@ -21,7 +21,7 @@ env:
 
 jobs:
   lint:
-    runs-on: [self-hosted, chef]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -35,7 +35,7 @@ jobs:
 
   unit-test:
     needs: lint
-    runs-on: [self-hosted, chef]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -51,7 +51,7 @@ jobs:
 
   integration-test:
     needs: unit-test
-    runs-on: [self-hosted, chef]
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
       fail-fast: false
