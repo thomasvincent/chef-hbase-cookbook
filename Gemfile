@@ -5,6 +5,9 @@ source 'https://rubygems.org'
 gem 'chef', '~> 18.0'
 gem 'chef-cli', '~> 5.6'
 
+# Pin psych to avoid compilation issues with Ruby 3.2+
+gem 'psych', '< 5'
+
 # Testing frameworks
 gem 'chefspec', '~> 9.3'
 # kitchen-inspec is limited to inspec < 7, so stick to the 6.x series for now.
