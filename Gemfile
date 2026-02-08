@@ -27,8 +27,8 @@ group :development do
 end
 
 group :test do
-  # ChefSpec 9 requires RSpec < 3.12
-  gem 'rspec', '>= 3.11', '< 3.14'
+  # ChefSpec 9.3.6 is incompatible with RSpec 3.13+ (removed expecteds_for_multiple_diffs)
+  gem 'rspec', '>= 3.11', '< 3.13'
   gem 'rspec-its', '~> 1.3'
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-console', '~> 0.9'

@@ -223,6 +223,41 @@ hbase_service 'master' do
 end
 ```
 
+## Recipes
+
+### default
+Main recipe that orchestrates the HBase installation. Includes user creation, installation, configuration, and service setup.
+
+### install
+Downloads and installs HBase from Apache mirrors using the ark cookbook.
+
+### config
+Configures HBase settings including hbase-site.xml, hbase-env.sh, and topology files (regionservers, backup-masters).
+
+### user
+Creates the HBase system user and group with appropriate permissions.
+
+### java
+Handles Java installation and configuration, ensuring compatible Java version is available.
+
+### master
+Configures and starts the HBase Master service.
+
+### regionserver
+Configures and starts the HBase RegionServer service.
+
+### backup_master
+Configures and starts the HBase Backup Master service.
+
+### rest
+Configures and starts the HBase REST API service.
+
+### thrift
+Configures and starts the HBase Thrift API service.
+
+### limits
+Configures system limits (ulimits) for the HBase user.
+
 ## Testing
 
 This cookbook uses Test Kitchen with Docker for integration testing.
@@ -286,12 +321,41 @@ See `attributes/default.rb` for a comprehensive list of configurable attributes.
 
 ## Development
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for your changes
+This cookbook uses a comprehensive testing and linting workflow:
+
+```bash
+# Install dependencies
+bundle install
+
+# Run all tests (style, unit, integration)
+bundle exec rake test
+
+# Run only style checks (cookstyle)
+bundle exec rake style
+
+# Run only unit tests (ChefSpec)
+bundle exec rake spec
+
+# Run integration tests (Test Kitchen)
+bundle exec kitchen test
+```
+
+## Contributing
+
+1. Fork the repository on GitHub
+2. Create a feature branch (`git checkout -b feature/my-new-feature`)
+3. Write tests for your changes
 4. Make your changes
-5. Run the tests to ensure they pass
-6. Submit a Pull Request
+5. Run the test suite to ensure all tests pass
+6. Commit your changes (`git commit -am 'Add new feature'`)
+7. Push to the branch (`git push origin feature/my-new-feature`)
+8. Create a Pull Request
+
+Please ensure:
+- All tests pass before submitting PR
+- Code follows Cookstyle guidelines
+- New features include appropriate tests
+- Documentation is updated for any new attributes or recipes
 
 ## License
 

@@ -37,7 +37,7 @@ berks-cookbooks/*
 cookbooks/*
 
 # Vagrant
-.vagrant
+.vagrant/
 Vagrantfile
 
 # Test Kitchen
@@ -70,7 +70,7 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 .project
-.vscode
+.vscode/
 *~
 *#
 .#*
