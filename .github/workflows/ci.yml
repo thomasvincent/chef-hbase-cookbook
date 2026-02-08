@@ -84,6 +84,7 @@ jobs:
       run: |
         bundle exec kitchen test ${{ matrix.suite }}-${{ matrix.os }}
       env:
+        CHEF_LICENSE: accept-no-persist
         KITCHEN_YAML: kitchen.yml
     - name: Upload kitchen logs on failure
       if: failure()
