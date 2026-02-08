@@ -10,13 +10,15 @@ gem 'psych', '< 5'
 
 # Testing frameworks
 gem 'chefspec', '~> 9.3'
-# kitchen-inspec is limited to inspec < 7, so stick to the 6.x series for now.
-gem 'inspec', '~> 7.0'
+# Use inspec-core (not inspec) to avoid commercial chef-licensing requirement in InSpec 7+.
+# inspec-core 6.x does not require a license key, only CHEF_LICENSE EULA acceptance.
+gem 'inspec-core', '~> 6.0'
 gem 'test-kitchen', '~> 4.0'
 
 # Test Kitchen drivers
 gem 'kitchen-dokken', '~> 2.20'
-gem 'kitchen-inspec', '~> 3.0'
+# 3.1+ supports test-kitchen 4.x and inspec-core 6.x/7.x
+gem 'kitchen-inspec', '~> 3.1'
 
 # Code quality and linting
 gem 'cookstyle', '~> 8.1'
