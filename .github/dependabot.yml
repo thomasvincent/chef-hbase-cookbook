@@ -4,19 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
     open-pull-requests-limit: 10
-    labels:
-      - "dependencies"
-      - "ruby"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    labels:
-      - "dependencies"
-      - "github-actions"
+    ignore:
+      # rspec-its 2.0 is incompatible with chefspec 9.3.6
+      # Keep pinned to 1.3 until chefspec is updated
+      - dependency-name: "rspec-its"
+        versions: [">=2.0.0"]
