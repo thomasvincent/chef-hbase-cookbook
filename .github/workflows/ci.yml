@@ -24,7 +24,7 @@ jobs:
     runs-on: [self-hosted, chef]
     timeout-minutes: 15
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -38,7 +38,7 @@ jobs:
     runs-on: [self-hosted, chef]
     timeout-minutes: 15
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -57,14 +57,14 @@ jobs:
       fail-fast: false
       matrix:
         suite: ['default', 'distributed']
-        os: ['ubuntu-2004', 'ubuntu-2204', 'debian-11', 'almalinux-9', 'amazonlinux-2023']
+        os: ['ubuntu-2204', 'debian-11', 'almalinux-9', 'amazonlinux-2023']
         include:
-          - os: 'ubuntu-2004'
+          - os: 'ubuntu-2204'
             suite: 'thrift'
-          - os: 'ubuntu-2004'
+          - os: 'ubuntu-2204'
             suite: 'rest'
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -87,7 +87,7 @@ jobs:
         KITCHEN_YAML: kitchen.yml
     - name: Upload kitchen logs on failure
       if: failure()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: kitchen-logs-${{ matrix.suite }}-${{ matrix.os }}
         path: .kitchen/logs/
