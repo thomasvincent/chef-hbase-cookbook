@@ -42,11 +42,15 @@ end
 
 case node['hbase']['install']['method']
 when 'binary'
+  # Validate required attributes for binary installation
+  raise 'node["hbase"]["version"] must be set for binary installation' if node['hbase']['version'].nil? || node['hbase']['version'].empty?
+  raise 'node["hbase"]["checksum"] must be set for binary installation to ensure download integrity' if node['hbase']['checksum'].nil?
+
   # Download and extract HBase using the ark cookbook
   ark 'hbase' do
     url "#{node['hbase']['mirror']}/#{node['hbase']['version']}/hbase-#{node['hbase']['version']}-bin.tar.gz"
     version node['hbase']['version']
-    checksum node['hbase']['checksum'] if node['hbase']['checksum']
+    checksum node['hbase']['checksum']
     path ::File.dirname(node['hbase']['install_dir'])
     home_dir node['hbase']['install_dir']
     owner node['hbase']['user']
