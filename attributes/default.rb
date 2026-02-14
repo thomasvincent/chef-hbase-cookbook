@@ -97,6 +97,13 @@ default['hbase']['metrics']['graphite']['port'] = 2003
 default['hbase']['metrics']['graphite']['prefix'] = 'hbase'
 default['hbase']['metrics']['period'] = 10
 
+# JMX security settings (applied when metrics provider is 'graphite')
+default['hbase']['metrics']['jmx']['authenticate'] = true
+default['hbase']['metrics']['jmx']['ssl'] = true
+default['hbase']['metrics']['jmx']['port'] = 10101
+default['hbase']['metrics']['jmx']['access_file'] = '/etc/hbase/conf/jmxremote.access'
+default['hbase']['metrics']['jmx']['password_file'] = '/etc/hbase/conf/jmxremote.password'
+
 # Coprocessors
 default['hbase']['coprocessors'] = []
 

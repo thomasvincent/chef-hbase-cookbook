@@ -37,6 +37,7 @@ if node['hbase']['security']['authentication'] == 'kerberos'
     owner node['hbase']['user']
     group node['hbase']['group']
     mode '0600'
+    sensitive true
     variables(
       principal: node['hbase']['security']['kerberos']['principal'],
       keytab: node['hbase']['security']['kerberos']['keytab'],
@@ -68,7 +69,45 @@ if node['hbase']['metrics']['enabled']
       action :create
     end
   when 'graphite'
-    env_vars['hbase_opts'] = "#{env_vars['hbase_opts']} -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+    jmx_opts = []
+    jmx_opts << "-Dcom.sun.management.jmxremote.port=#{node['hbase']['metrics']['jmx']['port']}"
+    jmx_opts << "-Dcom.sun.management.jmxremote.authenticate=#{node['hbase']['metrics']['jmx']['authenticate']}"
+    jmx_opts << "-Dcom.sun.management.jmxremote.ssl=#{node['hbase']['metrics']['jmx']['ssl']}"
+    jmx_opts << "-Dcom.sun.management.jmxremote.registry.ssl=#{node['hbase']['metrics']['jmx']['ssl']}"
+
+    if node['hbase']['metrics']['jmx']['authenticate']
+      jmx_opts << "-Dcom.sun.management.jmxremote.access.file=#{node['hbase']['metrics']['jmx']['access_file']}"
+      jmx_opts << "-Dcom.sun.management.jmxremote.password.file=#{node['hbase']['metrics']['jmx']['password_file']}"
+
+      # Create JMX access file
+      template node['hbase']['metrics']['jmx']['access_file'] do
+        source 'jmxremote.access.erb'
+        owner node['hbase']['user']
+        group node['hbase']['group']
+        mode '0600'
+        sensitive true
+        variables(
+          user: node['hbase']['user']
+        )
+        action :create
+      end
+
+      # Create JMX password file (user must populate with actual credentials)
+      template node['hbase']['metrics']['jmx']['password_file'] do
+        source 'jmxremote.password.erb'
+        owner node['hbase']['user']
+        group node['hbase']['group']
+        mode '0600'
+        sensitive true
+        variables(
+          user: node['hbase']['user']
+        )
+        action :create
+        not_if { ::File.exist?(node['hbase']['metrics']['jmx']['password_file']) }
+      end
+    end
+
+    env_vars['hbase_opts'] = "#{env_vars['hbase_opts']} #{jmx_opts.join(' ')}"
   end
 end
 
