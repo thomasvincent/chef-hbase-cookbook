@@ -6,6 +6,7 @@ describe 'hbase::default' do
       # for a complete list of available platforms and versions see:
       # https://github.com/chefspec/fauxhai/blob/master/PLATFORMS.md
       runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['checksum'] = 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
       runner.converge(described_recipe)
     end
 
@@ -62,6 +63,7 @@ describe 'hbase::default' do
   context 'When run as a region server' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['checksum'] = 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
       runner.node.override['hbase']['topology']['role'] = 'regionserver'
       runner.converge(described_recipe)
     end
@@ -79,6 +81,7 @@ describe 'hbase::default' do
   context 'When thrift service is enabled' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['checksum'] = 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
       runner.node.override['hbase']['services']['thrift']['enabled'] = true
       runner.converge(described_recipe)
     end
@@ -96,6 +99,7 @@ describe 'hbase::default' do
   context 'When REST service is enabled' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['checksum'] = 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
       runner.node.override['hbase']['services']['rest']['enabled'] = true
       runner.converge(described_recipe)
     end
