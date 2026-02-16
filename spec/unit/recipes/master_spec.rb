@@ -4,6 +4,7 @@ describe 'hbase::master' do
   context 'When all attributes are default, on Ubuntu 22.04' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['checksum'] = 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
       runner.converge(described_recipe)
     end
 
@@ -30,6 +31,7 @@ describe 'hbase::master' do
   context 'With custom service configuration' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '22.04')
+      runner.node.override['hbase']['checksum'] = 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
       runner.node.override['hbase']['service_mapping']['master']['config'] = {
         'hbase.master.port' => 16001,
         'hbase.master.info.port' => 16011,

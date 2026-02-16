@@ -63,6 +63,7 @@ suites:
         - test/integration/default
     attributes:
       hbase:
+        checksum: 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
         config:
           hbase.rootdir: 'file:///var/hbase'
           hbase.cluster.distributed: false
@@ -76,6 +77,7 @@ suites:
         - test/integration/distributed
     attributes:
       hbase:
+        checksum: 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
         config:
           hbase.rootdir: 'file:///var/hbase'
           hbase.cluster.distributed: true
@@ -93,6 +95,7 @@ suites:
         - test/integration/thrift
     attributes:
       hbase:
+        checksum: 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
         config:
           hbase.rootdir: 'file:///var/hbase'
           hbase.cluster.distributed: true
@@ -113,6 +116,7 @@ suites:
         - test/integration/rest
     attributes:
       hbase:
+        checksum: 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
         config:
           hbase.rootdir: 'file:///var/hbase'
           hbase.cluster.distributed: true
@@ -133,6 +137,7 @@ suites:
         - test/integration/kerberos
     attributes:
       hbase:
+        checksum: 'e0b79b53928e6e2424e1b8c16e9aa9a0dcbe2c20e05439473f9a8e05983b527b'
         config:
           hbase.rootdir: 'file:///var/hbase'
           hbase.cluster.distributed: true
