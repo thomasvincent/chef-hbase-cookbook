@@ -6,7 +6,7 @@ gem 'chef', '~> 18.0'
 gem 'chef-cli', '~> 5.6'
 
 # Pin psych to avoid compilation issues with Ruby 3.2+
-gem 'psych', '< 5'
+gem 'psych', '< 6'
 
 # Testing frameworks
 gem 'chefspec', '~> 9.3'
