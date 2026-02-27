@@ -14,6 +14,7 @@ transport:
 
 provisioner:
   name: dokken
+  product_name: cinc
   chef_license: accept-no-persist
   enforce_idempotency: false
   multiple_converge: 1
@@ -22,6 +23,9 @@ provisioner:
 
 verifier:
   name: inspec
+  chef_license: accept-no-persist
+  env_vars:
+    CHEF_LICENSE: accept-no-persist
 
 platforms:
   - name: ubuntu-22.04

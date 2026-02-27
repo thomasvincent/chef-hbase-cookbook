@@ -10,13 +10,15 @@ gem 'psych', '< 5'
 
 # Testing frameworks
 gem 'chefspec', '~> 9.3'
-# kitchen-inspec is limited to inspec < 7, so stick to the 6.x series for now.
-gem 'inspec', '~> 7.0'
+# Use inspec-core (not inspec) to avoid commercial chef-licensing requirement in InSpec 7+.
+# inspec-core 6.x does not require a license key, only CHEF_LICENSE EULA acceptance.
+gem 'inspec-core', '~> 6.0'
 gem 'test-kitchen', '~> 4.0'
 
 # Test Kitchen drivers
 gem 'kitchen-dokken', '~> 2.20'
-gem 'kitchen-inspec', '~> 3.0'
+# 3.1+ supports test-kitchen 4.x and inspec-core 6.x/7.x
+gem 'kitchen-inspec', '~> 3.1'
 
 # Code quality and linting
 gem 'cookstyle', '~> 8.1'
@@ -27,8 +29,8 @@ group :development do
 end
 
 group :test do
-  # ChefSpec 9.3.6 requires RSpec < 3.13 (rspec-expectations removed expecteds_for_multiple_diffs in 3.13+)
-  gem 'rspec', '~> 3.12.0'
+  # ChefSpec 9.3.6 is incompatible with RSpec 3.13+ (removed expecteds_for_multiple_diffs)
+  gem 'rspec', '>= 3.11', '< 3.13'
   gem 'rspec-its', '~> 1.3'
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-console', '~> 0.9'
