@@ -12,7 +12,7 @@ gem 'psych', '< 5'
 gem 'chefspec', '~> 9.3'
 # Use inspec-core (not inspec) to avoid commercial chef-licensing requirement in InSpec 7+.
 # inspec-core 6.x does not require a license key, only CHEF_LICENSE EULA acceptance.
-gem 'inspec-core', '~> 6.0'
+gem 'inspec-core', '~> 7.0'
 gem 'test-kitchen', '~> 4.0'
 
 # Test Kitchen drivers
